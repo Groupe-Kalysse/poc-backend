@@ -1,0 +1,5 @@
+- messages back>front (badges RFID)
+- reimplementer le projet initial
+- ordres (ouverture casier)
+- implementer database
+- centraliser configs

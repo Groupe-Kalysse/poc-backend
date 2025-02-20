@@ -1,0 +1,27 @@
+FROM node:20-bullseye
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    gcc \
+    g++ \
+    make \
+    bash \
+    pcscd \
+    libpcsclite1 \
+    libpcsclite-dev \
+    pcsc-tools \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configurer Python et pcscd
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+RUN mkdir -p /var/run/pcscd && chmod 777 /var/run/pcscd
+
+COPY *.json ./
+RUN npm install
+COPY src ./src
+
+# Commande pour démarrer le service
+CMD ["sh", "-c", "pcscd -f & npm run dev"]
