@@ -3,10 +3,14 @@ import SerialHandler from "../services/SerialHandler";
 import SocketServer from "../services/SocketServer";
 
 const router = Router();
+
 router.get("/health", (_req, res) => {
   res.send("OK!");
 });
+
 router.get("/socket", (_req, res) => {
+  console.log("Should fire mock rfid-event event");
+
   SocketServer.getInstance().io.emit("rfid-event", { uid: "IT WORKS!" });
   res.send("OK!");
 });

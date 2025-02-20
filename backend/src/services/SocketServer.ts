@@ -13,9 +13,14 @@ class SocketServer {
       path: "/socket.io/",
       transports: ["websocket"],
     });
-    const socketNamespace = this.io.of("/socket");
-    socketNamespace.on("connection", (socket) => {
+    this.io.on("connection", (socket) => {
       console.log("🟢 Client connecté :", socket.id);
+
+      socket.onAny((event, ...args) => {
+        console.log(`📡 Event reçu: ${event}`, args);
+      });
+      socket.on("rfid-event", () => console.log("EVENT!!!"));
+
       socket.on("disconnect", () =>
         console.log("🔴 Client déconnecté :", socket.id)
       );
