@@ -10,6 +10,7 @@ export default function RfidListener() {
 
     const handleCarteDetectee = (data: { uid: string }) => {
       setLastUid(data.uid);
+
       setTimeout(() => {
         setLastUid(null);
       }, 5000);
@@ -21,6 +22,7 @@ export default function RfidListener() {
       socket.off("rfid-event", handleCarteDetectee);
     };
   }, [socket]);
+
   return (
     <div>
       <h2>Scanner RFID ({isConnected ? "✅" : "❌"})</h2>

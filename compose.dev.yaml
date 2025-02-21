@@ -27,7 +27,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     devices:
-      - "/dev/bus/usb:/dev/bus/usb"
+      - "/dev/hidraw1:/dev/hidraw1"
     ports:
       - "3001:3001"
     healthcheck:

@@ -16,11 +16,6 @@ class SocketServer {
     this.io.on("connection", (socket) => {
       console.log("🟢 Client connecté :", socket.id);
 
-      socket.onAny((event, ...args) => {
-        console.log(`📡 Event reçu: ${event}`, args);
-      });
-      socket.on("rfid-event", () => console.log("EVENT!!!"));
-
       socket.on("disconnect", () =>
         console.log("🔴 Client déconnecté :", socket.id)
       );

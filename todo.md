@@ -1,5 +1,8 @@
-- messages back>front (badges RFID)
-- reimplementer le projet initial
-- ordres (ouverture casier)
-- implementer database
+- ✅ messages back>front
+- ✅ badges RFID
+  - ✅ lecteur en mode HID
+  - ❓ lecteur en mode PCSC
+  - ⚠️ vraie phase de test nécessaire sur le matériel final
+- ordres (port serie)
+- reimplementer database
 - centraliser configs
