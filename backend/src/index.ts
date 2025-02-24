@@ -1,13 +1,13 @@
 import express from "express";
 import { createServer } from "http";
 import apiRoutes from "./routes/api";
-import NFCReader from "./services/NfcReader";
 import SocketServer from "./services/SocketServer";
+import NfcReader from "./services/NfcReader";
 
 const app = express();
 const httpServer = createServer(app);
 const socketServer = SocketServer.init(httpServer);
-NFCReader.getInstance();
+NfcReader.createReader();
 
 app.use(express.json());
 app.use("/api", apiRoutes);
