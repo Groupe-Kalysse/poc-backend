@@ -38,6 +38,8 @@ services:
         ]
     volumes:
       - ./backend/src:/app/src/
+    environment:
+      RFID_TYPE: ${RFID_TYPE}
 
   frontend:
     container_name: frontend
