@@ -27,7 +27,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     devices:
-      - "/dev/hidraw1:/dev/hidraw1"
+      - /dev/hidraw1:/dev/hidraw1
+      - /dev/bus/usb
     ports:
       - "3001:3001"
     healthcheck:
@@ -38,6 +39,7 @@ services:
         ]
     volumes:
       - ./backend/src:/app/src/
+      - /run/pcscd:/run/pcscd
     environment:
       RFID_TYPE: ${RFID_TYPE}
 
