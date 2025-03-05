@@ -1,6 +1,6 @@
 import pcsclite from "pcsclite";
-import SocketServer from "./SocketServer";
-import badges from "../badges.json";
+import SocketServer from "../SocketServer";
+import badges from "../../config/badges.json";
 
 export default class PCSCReader {
   private static instance: PCSCReader;

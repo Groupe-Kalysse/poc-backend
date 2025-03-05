@@ -1,6 +1,6 @@
 import fs from "fs";
-import SocketServer from "./SocketServer";
-import badges from "../badges.json";
+import SocketServer from "../SocketServer";
+import badges from "../../config/badges.json";
 
 export default class HidReader {
   private static instance: HidReader;

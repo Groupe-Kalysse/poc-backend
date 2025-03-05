@@ -1,5 +1,5 @@
-import HidReader from "./HidReader";
-import PCSCReader from "./PcscReader";
+import HidReader from "./NfcTypes/HidReader";
+import PCSCReader from "./NfcTypes/PcscReader";
 
 export default class NfcReader {
   static createReader() {

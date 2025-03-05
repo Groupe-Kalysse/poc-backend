@@ -1,6 +1,5 @@
 import { Router } from "express";
-import SerialHandler from "../services/SerialHandler";
-import SocketServer from "../services/SocketServer";
+import Locker from "../services/Locker";
 
 const router = Router();
 
@@ -8,15 +7,14 @@ router.get("/health", (_req, res) => {
   res.send("OK!");
 });
 
-router.get("/socket", (_req, res) => {
-  console.log("Should fire mock rfid-event event");
-
-  SocketServer.getInstance().io.emit("rfid-event", { uid: "IT WORKS!" });
-  res.send("OK!");
-});
-
 router.post("/open", (_req, res) => {
-  SerialHandler.getInstance().sendCommand("OPEN_LOCKER");
+  const lockerType = process.env.LOCKER_TYPE;
+  if (!lockerType) {
+    res.status(500);
+    return;
+  }
+  const locker = new Locker(lockerType);
+  locker.unlock(1);
   res.json({ message: "🔓 Casier ouvert !" });
 });
 
