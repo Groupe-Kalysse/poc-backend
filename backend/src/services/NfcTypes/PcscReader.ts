@@ -18,9 +18,6 @@ export default class PCSCReader {
   }
 
   private startListening() {
-    console.warn(
-      "🟠 Utilisation du driver PCSC, stabilité non encore vérifiée ⚠️"
-    );
     console.log("🟢 Démarrage de la lecture RFID via PCSC...");
 
     this.pcsc.on("reader", (reader) => {

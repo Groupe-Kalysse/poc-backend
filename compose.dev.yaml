@@ -44,8 +44,8 @@ services:
       RFID_TYPE: ${RFID_TYPE}
       LOCKER_TYPE: ${LOCKER_TYPE}
       DEBUG: pcsclite # Active les logs de pcsclite pour debug
-    network_mode: "host" # Permet d’accéder directement au PCSC sans besoin de forwarding
-    privileged: true
+    # network_mode: "host" # Permet d’accéder directement au PCSC sans besoin de forwarding
+    # privileged: true
 
   frontend:
     container_name: frontend
