@@ -3,7 +3,7 @@ import { SerialPort } from "serialport";
 
 class SerialHandler {
   private static instance: SerialHandler;
-  private static address: "00";
+  private address: string;
   private port: SerialPort;
   private isOpen: boolean = false;
   private retryInterval: NodeJS.Timeout | null = null;
@@ -33,6 +33,7 @@ class SerialHandler {
         throw new Error("Wrong type of Locker type: " + lockerType);
     }
     this.baudRate = settings.baudRate;
+    this.address = settings.address;
     this.commandSuffix = settings.codeEnd;
     this.commandPrefix = settings.codeStart;
     this.commands = {
@@ -94,7 +95,7 @@ class SerialHandler {
     }
     const bufferValue =
       this.commandPrefix +
-      SerialHandler.address +
+      this.address +
       parseInt(commandCode, 16).toString(16).padStart(2, "0") +
       slot.toString(16).padStart(2, "0") +
       this.commandSuffix;
