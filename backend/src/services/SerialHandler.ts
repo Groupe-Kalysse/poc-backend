@@ -45,7 +45,6 @@ class SerialHandler {
     };
 
     console.log("new Serial - settings: ", settings);
-    console.log("new Serial - adress: ", settings.address);
     this.port = new SerialPort({
       path: settings.address,
       baudRate: this.baudRate,
@@ -104,6 +103,8 @@ class SerialHandler {
       parseInt(commandCode, 16).toString(16).padStart(2, "0") +
       slot.toString(16).padStart(2, "0") +
       this.commandSuffix;
+
+    console.log(bufferValue);
 
     this.port.write(bufferValue, (err) => {
       if (err) {
