@@ -83,10 +83,6 @@ class SerialHandler {
   }
 
   public sendCommand(command: "open" | "getStatus", slot: number): void {
-    if (!this.isOpen) {
-      console.error("❌ Port série non disponible");
-      return;
-    }
     let commandCode;
     switch (command) {
       case "open":
@@ -96,7 +92,6 @@ class SerialHandler {
         commandCode = this.commands.status;
         break;
     }
-
     const bufferValue =
       this.commandPrefix +
       SerialHandler.address +
@@ -104,7 +99,12 @@ class SerialHandler {
       slot.toString(16).padStart(2, "0") +
       this.commandSuffix;
 
-    console.log(bufferValue);
+    console.log("Serial Order to send", bufferValue);
+
+    if (!this.isOpen) {
+      console.error("❌ Port série non disponible");
+      return;
+    }
 
     this.port.write(bufferValue, (err) => {
       if (err) {
