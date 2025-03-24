@@ -46,7 +46,7 @@ export default class PCSCReader {
 
               const user = badges.find((candidate) => candidate.uid === uid);
               SocketServer.getInstance().io.emit("rfid-event", {
-                uid: user?.label ?? "Inconnu",
+                uid: user?.label ?? uid ?? "Inconnu",
               });
 
               reader.disconnect(reader.SCARD_LEAVE_CARD, (err) => {
