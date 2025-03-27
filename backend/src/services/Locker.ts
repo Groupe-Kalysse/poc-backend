@@ -19,9 +19,9 @@ export default class Locker {
 
   unlock(slot: number): void {
     if (slot < 1 || slot > this.totalSlots) {
-      throw new Error("Invalid slot number");
+      throw new Error(`Invalid slot number: ${slot}`);
     }
-    console.log(`Opening locker ${slot} to unlock`);
+    //console.log(`Opening locker ${slot} to unlock`);
     SerialHandler.getInstance().sendCommand("open", slot);
   }
 
