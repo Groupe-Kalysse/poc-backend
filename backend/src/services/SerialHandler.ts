@@ -47,7 +47,7 @@ class SerialHandler {
 
     console.log("new Serial - settings: ", settings);
     this.port = new SerialPort({
-      path: settings.address,
+      path: "/dev/ttyUSB0",
       baudRate: this.baudRate,
     });
 
