@@ -126,7 +126,7 @@ class SerialHandler {
       return;
     }
 
-    this.port.write(bufferValue, (err) => {
+    this.port.write(Buffer.from(bufferValue, "hex"), (err) => {
       if (err) {
         console.error("❌ Erreur d'écriture sur le port série :", err);
       } else {
