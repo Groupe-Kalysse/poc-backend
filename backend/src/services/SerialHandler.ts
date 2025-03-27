@@ -3,7 +3,7 @@ import { SerialPort } from "serialport";
 
 class SerialHandler {
   private static instance: SerialHandler;
-  private address: string;
+  private address: number;
   private port: SerialPort;
   private isOpen: boolean = false;
   private retryInterval: NodeJS.Timeout | null = null;
@@ -76,6 +76,14 @@ class SerialHandler {
     });
   }
 
+  private checksum(...values: string[]): string {
+    return values
+      .reduce((acc, val) => acc + parseInt(val, 16), 0)
+      .toString(16)
+      .slice(-2)
+      .toUpperCase();
+  }
+
   public static getInstance(): SerialHandler {
     if (!SerialHandler.instance) {
       SerialHandler.instance = new SerialHandler();
@@ -93,12 +101,24 @@ class SerialHandler {
         commandCode = this.commands.status;
         break;
     }
+    const adresse = Buffer.from([this.address]);
+    const slotNumber = Buffer.from([slot]);
+
+    const sum = this.checksum(
+      this.commandPrefix,
+      adresse.toString("hex"),
+      slotNumber.toString("hex"),
+      commandCode,
+      this.commandSuffix
+    );
+
     const bufferValue =
       this.commandPrefix +
-      this.address +
-      parseInt(commandCode, 16).toString(16).padStart(2, "0") +
-      slot.toString(16).padStart(2, "0") +
-      this.commandSuffix;
+      adresse.toString("hex") +
+      slotNumber.toString("hex") +
+      commandCode +
+      this.commandSuffix +
+      sum;
 
     console.log("Serial Order to send", bufferValue);
 
