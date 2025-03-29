@@ -101,7 +101,7 @@ class SerialHandler {
         break;
     }
     const adresse = Buffer.from([this.address]);
-    const slotNumber = Buffer.from([0]); // TODO: fix hard coded value
+    const slotNumber = Buffer.from([slot - 1]); // TODO: fix hard coded value
 
     const sum = this.checksum(
       this.commandPrefix,
