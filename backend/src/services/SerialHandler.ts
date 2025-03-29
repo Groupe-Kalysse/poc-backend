@@ -119,7 +119,7 @@ class SerialHandler {
       this.commandSuffix +
       sum;
 
-    console.log("Serial Order to send", bufferValue);
+    console.log("Serial Order to send", Buffer.from(bufferValue, "hex"));
 
     if (!this.isOpen) {
       console.error("❌ Port série non disponible");
