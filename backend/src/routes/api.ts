@@ -15,7 +15,7 @@ router.post("/open", (_req, res) => {
   }
   const locker = new Locker(lockerType);
   // TODO Implement correct behaviour
-  locker.unlock(1);
+  locker.unlock(0);
   res.json({ message: "🔓 Casier ouvert !" });
 });
 
