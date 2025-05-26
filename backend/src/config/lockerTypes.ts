@@ -1,23 +1,23 @@
 const cu48 = {
-  address: 0, // Reglage sur plaque cu48
+  address: 0x00, // Reglage sur plaque cu48
+  codeStart: 0x02,
+  codeGetStatus: 0x50,
+  codeOpening: 0x51,
+  codeResponseStatus: 0x65,
+  codeEnd: 0x03,
+  
   totalSlots: 48,
-  codeStart: "02",
-  codeGetStatus: "50",
-  codeOpening: "51",
-  codeResponseStatus: "65",
-  // codeResponseAllStatus: null,
-  codeEnd: "03",
   baudRate: 19200,
 };
 const cu16 = {
-  address: 0, // Reglage sur plaque cu48
+  address: 0x00, // Reglage sur plaque cu16
+  codeStart: 0x02,
+  codeGetStatus: 0x30,
+  codeOpening: 0x31,
+  codeResponseStatus: 0x35,
+  codeEnd: 0x03,
+  
   totalSlots: 16,
-  codeStart: "02",
-  codeGetStatus: "30",
-  codeOpening: "31",
-  codeResponseStatus: "35",
-  // codeResponseAllStatus: "36",
-  codeEnd: "03",
   baudRate: 19200,
 };
 export { cu16, cu48 };

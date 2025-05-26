@@ -8,14 +8,14 @@ class SerialHandler {
   private isOpen: boolean = false;
   private retryInterval: NodeJS.Timeout | null = null;
   private baudRate: number;
-  private commandPrefix: string;
-  private commandSuffix: string;
+  private commandPrefix: number;
+  private commandSuffix: number;
   private commands: {
-    open: string;
-    status: string;
+    open: number;
+    status: number;
   };
   private responses: {
-    status: string;
+    status: number;
     // allStatus: string | null;
   };
 
@@ -59,9 +59,8 @@ class SerialHandler {
     });
 
     this.port.on("data", (data: Buffer) => {
-      console.log("📡 Données reçues :", data.toString("utf-8").trim());
+      console.log("📡 Données reçues :", data);
       console.log("Should compare to code " + this.responses.status);
-      // TODO Analyze data to determine if response.status, or something else
     });
 
     this.port.on("error", (err) => {
@@ -75,12 +74,9 @@ class SerialHandler {
     });
   }
 
-  private checksum(...values: string[]): string {
+  private checksum(...values: number[]): number {
     return values
-      .reduce((acc, val) => acc + parseInt(val, 16), 0)
-      .toString(16)
-      .slice(-2)
-      .toUpperCase();
+      .reduce((acc, val) => acc+val, 0)
   }
 
   public static getInstance(): SerialHandler {
@@ -100,33 +96,31 @@ class SerialHandler {
         commandCode = this.commands.status;
         break;
     }
-    const adresse = Buffer.from([this.address]);
-    const slotNumber = Buffer.from([slot]);
 
     const sum = this.checksum(
-      this.commandPrefix,
-      adresse.toString("hex"),
-      slotNumber.toString("hex"),
-      commandCode,
-      this.commandSuffix
+      this.commandPrefix, // CU-dependant
+      this.address, // 0x0A for broadcast,
+      slot, // 0x30 for broadcast,
+      commandCode, // CU-dependant
+      this.commandSuffix // CU-dependant
     );
 
-    const bufferValue =
-      this.commandPrefix +
-      adresse.toString("hex") +
-      slotNumber.toString("hex") +
-      commandCode +
-      this.commandSuffix +
-      sum;
+    const message =
+      [this.commandPrefix,
+      this.address,
+      slot,
+      commandCode,
+      this.commandSuffix,
+      sum];
 
-    console.log("Serial Order to send", Buffer.from(bufferValue, "hex"));
+    console.log("Serial Order to send", message.map(byte=>byte.toString(16)));
 
     if (!this.isOpen) {
       console.error("❌ Port série non disponible");
       return;
     }
 
-    this.port.write(Buffer.from(bufferValue, "hex"), (err) => {
+    this.port.write(message, (err) => {
       if (err) {
         console.error("❌ Erreur d'écriture sur le port série :", err);
       } else {

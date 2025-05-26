@@ -18,7 +18,7 @@ export default class Locker {
   }
 
   unlock(slot: number): void {
-    if (slot < 1 || slot > this.totalSlots) {
+    if (slot < 0 || slot > this.totalSlots-1) {
       throw new Error(`Invalid slot number: ${slot}`);
     }
     //console.log(`Opening locker ${slot} to unlock`);
