@@ -20,6 +20,9 @@ class SerialHandler {
   };
 
   private constructor() {
+    if(!process.env.LOCKER_TYPE) throw new Error("Missing env: LOCKER_TYPE")
+    if(!process.env.SERIAL_PATH) throw new Error("Missing env: SERIAL_PATH")
+
     const lockerType = process.env.LOCKER_TYPE;
     let settings;
     switch (lockerType) {
@@ -46,7 +49,7 @@ class SerialHandler {
     };
 
     this.port = new SerialPort({
-      path: "/dev/ttyUSB0",
+      path: process.env.SERIAL_PATH,
       baudRate: this.baudRate,
     });
 
@@ -97,23 +100,20 @@ class SerialHandler {
         break;
     }
 
-    const sum = this.checksum(
+    const message =[
       this.commandPrefix, // CU-dependant
-      this.address, // 0x0A for broadcast,
       slot, // 0x30 for broadcast,
       commandCode, // CU-dependant
       this.commandSuffix // CU-dependant
-    );
+    ];
 
-    const message =
-      [this.commandPrefix,
-      this.address,
-      slot,
-      commandCode,
-      this.commandSuffix,
-      sum];
+    // CU16 and CU48 have slightly different protocols
+    const lockerType = process.env.LOCKER_TYPE
+    if(lockerType==="CU48")
+      message.splice(1,0,this.address)
 
-    console.log("Serial Order to send", message.map(byte=>byte.toString(16)));
+    // In any case, checksum must be added at the end
+    message.push(this.checksum(...message))
 
     if (!this.isOpen) {
       console.error("❌ Port série non disponible");

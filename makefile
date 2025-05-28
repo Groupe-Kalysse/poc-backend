@@ -17,3 +17,6 @@ dev:
 
 e2e: 
 	docker compose --env-file .env.e2e -f compose.e2e.yaml run e2e-tests
+
+resetSocket:
+	sudo systemctl restart pcscd.socket
