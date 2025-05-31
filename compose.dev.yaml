@@ -46,7 +46,7 @@ services:
       LOCKER_TYPE: ${LOCKER_TYPE}
       SERIAL_PATH: ${SERIAL_PATH}
       TIMEOUT_STATUS: ${TIMEOUT_STATUS}
-  
+
   frontend:
     container_name: frontend
     <<: *baseService

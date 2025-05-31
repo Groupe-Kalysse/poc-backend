@@ -4,11 +4,11 @@ import SerialHandler from "./SerialHandler";
 export default class Locker {
   private static instance: Locker;
   private totalSlots: number;
-  private openLockers:number[] = []
+  private openLockers: number[] = [];
 
   private constructor(lockerType: string) {
-    if(!process.env.TIMEOUT_STATUS) throw new Error("Missing env: TIMEOUT_STATUS")
-    
+    if (!process.env.TIMEOUT_STATUS)
+      throw new Error("Missing env: TIMEOUT_STATUS");
 
     switch (lockerType) {
       case "CU48":
@@ -21,7 +21,7 @@ export default class Locker {
         throw new Error("Wrong type of Locker type: " + lockerType);
     }
 
-    setInterval(this.getStatus,Number(process.env.TIMEOUT_STATUS))
+    setInterval(this.getStatus, Number(process.env.TIMEOUT_STATUS));
   }
   public static getInstance(lockerType: string): Locker {
     if (!Locker.instance) {
@@ -30,9 +30,8 @@ export default class Locker {
     return Locker.instance;
   }
 
-
   unlock(slot: number): void {
-    if (slot < 0 || slot > this.totalSlots-1) {
+    if (slot < 0 || slot > this.totalSlots - 1) {
       throw new Error(`Invalid slot number: ${slot}`);
     }
     SerialHandler.getInstance().sendCommand("open", slot);
@@ -44,7 +43,7 @@ export default class Locker {
   }
 
   getStatus() {
-    SerialHandler.getInstance().sendCommand("getStatus")
+    SerialHandler.getInstance().sendCommand("getStatus");
   }
 
   handleStatusUpdate(newData: number[]) {
@@ -52,7 +51,7 @@ export default class Locker {
     //   `);
     // console.debug("Old status: ",this.openLockers);
     // console.debug("new status: ",newData);
-    this.openLockers=newData
-    this.openLockers
+    this.openLockers = newData;
+    this.openLockers;
   }
 }

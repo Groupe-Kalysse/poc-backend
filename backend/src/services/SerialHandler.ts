@@ -5,7 +5,7 @@ import Locker from "./Locker";
 class SerialHandler {
   private static instance: SerialHandler;
   private lastMsgFromCU: Uint8Array;
-  private msgTimeout:NodeJS.Timeout;
+  private msgTimeout: NodeJS.Timeout;
   private address: number;
   private port: SerialPort;
   private isOpen: boolean = false;
@@ -17,12 +17,11 @@ class SerialHandler {
     open: number;
     status: number;
   };
-  private locker:Locker;
-  
+  private locker: Locker;
 
   private constructor() {
-    if(!process.env.LOCKER_TYPE) throw new Error("Missing env: LOCKER_TYPE")
-    if(!process.env.SERIAL_PATH) throw new Error("Missing env: SERIAL_PATH")
+    if (!process.env.LOCKER_TYPE) throw new Error("Missing env: LOCKER_TYPE");
+    if (!process.env.SERIAL_PATH) throw new Error("Missing env: SERIAL_PATH");
 
     const lockerType = process.env.LOCKER_TYPE;
     let settings;
@@ -38,7 +37,7 @@ class SerialHandler {
     }
 
     this.locker = Locker.getInstance(lockerType);
-    this.lastMsgFromCU=new Uint8Array()
+    this.lastMsgFromCU = new Uint8Array();
     this.baudRate = settings.baudRate;
     this.address = settings.address;
     this.commandSuffix = settings.codeEnd;
@@ -62,13 +61,14 @@ class SerialHandler {
     });
 
     this.port.on("data", (data: Buffer) => {
-      if(!this.lastMsgFromCU)
-        this.lastMsgFromCU=data
+      if (!this.lastMsgFromCU) this.lastMsgFromCU = data;
       else {
-        let tmp = new Uint8Array(this.lastMsgFromCU.byteLength + data.byteLength);
+        let tmp = new Uint8Array(
+          this.lastMsgFromCU.byteLength + data.byteLength
+        );
         tmp.set(new Uint8Array(this.lastMsgFromCU), 0);
         tmp.set(new Uint8Array(data), this.lastMsgFromCU.byteLength);
-        this.lastMsgFromCU=tmp;
+        this.lastMsgFromCU = tmp;
       }
 
       // Si 0.5s passent sans nouveau paquet, considérer le message comme complet
@@ -92,8 +92,7 @@ class SerialHandler {
   }
 
   private checksum(...values: number[]): number {
-    return values
-      .reduce((acc, val) => acc+val, 0)
+    return values.reduce((acc, val) => acc + val, 0);
   }
 
   public static getInstance(): SerialHandler {
@@ -103,8 +102,8 @@ class SerialHandler {
     return SerialHandler.instance;
   }
 
-  public sendCommand(command: "open" | "getStatus", slot=0): void {
-    const lockerType = process.env.LOCKER_TYPE
+  public sendCommand(command: "open" | "getStatus", slot = 0): void {
+    const lockerType = process.env.LOCKER_TYPE;
     let commandCode;
     switch (command) {
       case "open":
@@ -115,19 +114,18 @@ class SerialHandler {
         break;
     }
 
-    const message =[
+    const message = [
       this.commandPrefix, // CU-dependant
       slot, // 0x30 for broadcast,
       commandCode, // CU-dependant
-      this.commandSuffix // CU-dependant
+      this.commandSuffix, // CU-dependant
     ];
 
     // CU16 and CU48 have slightly different protocols
-    if(lockerType==="CU48")
-      message.splice(1,0,this.address)
+    if (lockerType === "CU48") message.splice(1, 0, this.address);
 
     // In any case, checksum must be added at the end
-    message.push(this.checksum(...message))
+    message.push(this.checksum(...message));
 
     // console.debug("Serial Order to send", message.map(byte=>byte.toString(16)));
 
@@ -147,20 +145,24 @@ class SerialHandler {
 
   private receiveMessage() {
     // console.debug("📡 Données reçues :", this.lastMsgFromCU);
-    
-    // Remove affixes and unused data
-    let values:Number[] =[]
-    for(let i=3;i<this.lastMsgFromCU.length-4;i++)
-      values.push(this.lastMsgFromCU[i])
 
-    const lockersStatusBits = values.map((byte)=>byte.toString(2).padStart(8,"0")).reverse().join("").split("")
-    const openLockers = lockersStatusBits.reduce((acc, bit,index)=>{
-      if(bit==="0") return acc;
-      return [...acc, index+1]
-    },new Array())
-    this.locker.handleStatusUpdate(openLockers)
-    
-    this.lastMsgFromCU=new Uint8Array();
+    // Remove affixes and unused data
+    let values: Number[] = [];
+    for (let i = 3; i < this.lastMsgFromCU.length - 4; i++)
+      values.push(this.lastMsgFromCU[i]);
+
+    const lockersStatusBits = values
+      .map((byte) => byte.toString(2).padStart(8, "0"))
+      .reverse()
+      .join("")
+      .split("");
+    const openLockers = lockersStatusBits.reduce((acc, bit, index) => {
+      if (bit === "0") return acc;
+      return [...acc, index + 1];
+    }, new Array());
+    this.locker.handleStatusUpdate(openLockers);
+
+    this.lastMsgFromCU = new Uint8Array();
   }
 
   private retryConnection(): void {

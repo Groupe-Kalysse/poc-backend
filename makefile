@@ -1,4 +1,4 @@
-.PHONY: stop clean enter dev loc e2e
+.PHONY: stop clean enter dev
 
 stop:
 	docker stop $(shell docker ps -a -q)
@@ -9,14 +9,6 @@ clean:
 enter:
 	docker exec -it $(target) sh
 
-loc: 
-	docker compose --env-file .env.loc -f compose.loc.yaml up --build -d
-
 dev: 
 	docker compose --env-file .env.dev -f compose.dev.yaml up --build -d
 
-e2e: 
-	docker compose --env-file .env.e2e -f compose.e2e.yaml run e2e-tests
-
-resetSocket:
-	sudo systemctl restart pcscd.socket

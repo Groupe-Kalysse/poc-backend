@@ -4,7 +4,7 @@ import Locker from "../services/Locker";
 const router = Router();
 
 const lockerType = process.env.LOCKER_TYPE;
-if(!lockerType) throw new Error("Missing env: LOCKER_TYPE")
+if (!lockerType) throw new Error("Missing env: LOCKER_TYPE");
 
 const locker = Locker.getInstance(lockerType);
 
@@ -17,7 +17,7 @@ router.post("/open/:id", (req, res) => {
     res.status(500);
     return;
   }
-  const lockerId = Number(req.params.id)
+  const lockerId = Number(req.params.id);
   // TODO Implement correct behaviour
   locker.unlock(lockerId);
   res.json({ message: "🔓 Casier ouvert !" });

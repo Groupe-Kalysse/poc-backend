@@ -5,7 +5,7 @@ const cu48 = {
   codeOpening: 0x51,
   codeResponseStatus: 0x65,
   codeEnd: 0x03,
-  
+
   totalSlots: 48,
   baudRate: 19200,
 };
@@ -16,7 +16,7 @@ const cu16 = {
   codeOpening: 0x31,
   codeResponseStatus: 0x35,
   codeEnd: 0x03,
-  
+
   totalSlots: 16,
   baudRate: 19200,
 };
