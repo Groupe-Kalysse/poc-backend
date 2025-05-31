@@ -6,10 +6,10 @@ export default class NfcReader {
     const readerType = process.env.RFID_TYPE || "HID";
 
     if (readerType === "PCSC") {
-      console.log("🔵 Utilisation du lecteur PCSC");
+      console.info("🔵 Utilisation du lecteur PCSC");
       return PCSCReader.getInstance();
     } else {
-      console.log("🟢 Utilisation du lecteur HID");
+      console.info("🟢 Utilisation du lecteur HID");
       return HidReader.getInstance();
     }
   }

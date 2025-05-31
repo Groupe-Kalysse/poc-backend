@@ -15,5 +15,5 @@ app.use("/api", apiRoutes);
 const PORT = 3001;
 httpServer.listen(PORT, () => {
   socketServer.io.emit("init", { msg: "Server initialized" });
-  console.log(`🚀 Serveur en écoute sur http://localhost:${PORT}`);
+  console.info(`🚀 Serveur en écoute sur http://localhost:${PORT}`);
 });

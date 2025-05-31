@@ -14,12 +14,12 @@ export const useSocket = () => {
     });
 
     newSocket.on("connect", () => {
-      console.log(`✅ Connecté au websocket !`);
+      // console.debug(`✅ Connecté au websocket !`);
       setIsConnected(true);
     });
 
     newSocket.on("disconnect", () => {
-      console.log(`❌ Déconnecté du websocket !`);
+      // console.debug(`❌ Déconnecté du websocket !`);
       setIsConnected(false);
     });
 

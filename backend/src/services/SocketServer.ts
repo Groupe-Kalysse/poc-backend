@@ -14,10 +14,10 @@ class SocketServer {
       transports: ["websocket"],
     });
     this.io.on("connection", (socket) => {
-      console.log("🟢 Client connecté :", socket.id);
+      console.info("🟢 Client connecté :", socket.id);
 
       socket.on("disconnect", () =>
-        console.log("🔴 Client déconnecté :", socket.id)
+        console.info("🔴 Client déconnecté :", socket.id)
       );
     });
   }

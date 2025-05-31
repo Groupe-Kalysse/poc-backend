@@ -18,10 +18,10 @@ export default class PCSCReader {
   }
 
   private startListening() {
-    console.log("🟢 Démarrage de la lecture RFID via PCSC...");
+    // console.debug("🟢 Démarrage de la lecture RFID via PCSC...");
 
     this.pcsc.on("reader", (reader) => {
-      console.log(`🔗 Lecteur détecté : ${reader.name}`);
+      // console.debug(`🔗 Lecteur détecté : ${reader.name}`);
 
       reader.on("status", (status) => {
         if (!(status.state & reader.SCARD_STATE_PRESENT)) return;
@@ -42,7 +42,7 @@ export default class PCSCReader {
               }
 
               const uid = response.toString("hex").toUpperCase();
-              console.log("📡 UID reçu :", uid);
+              console.debug("📡 UID reçu :", uid);
 
               const user = badges.find((candidate) => candidate.uid === uid);
               SocketServer.getInstance().io.emit("rfid-event", {

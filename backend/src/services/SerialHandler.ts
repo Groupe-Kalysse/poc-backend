@@ -1,8 +1,11 @@
 import { cu16, cu48 } from "../config/lockerTypes";
 import { SerialPort } from "serialport";
+import Locker from "./Locker";
 
 class SerialHandler {
   private static instance: SerialHandler;
+  private lastMsgFromCU: Uint8Array;
+  private msgTimeout:NodeJS.Timeout;
   private address: number;
   private port: SerialPort;
   private isOpen: boolean = false;
@@ -14,10 +17,8 @@ class SerialHandler {
     open: number;
     status: number;
   };
-  private responses: {
-    status: number;
-    // allStatus: string | null;
-  };
+  private locker:Locker;
+  
 
   private constructor() {
     if(!process.env.LOCKER_TYPE) throw new Error("Missing env: LOCKER_TYPE")
@@ -35,6 +36,9 @@ class SerialHandler {
       default:
         throw new Error("Wrong type of Locker type: " + lockerType);
     }
+
+    this.locker = Locker.getInstance(lockerType);
+    this.lastMsgFromCU=new Uint8Array()
     this.baudRate = settings.baudRate;
     this.address = settings.address;
     this.commandSuffix = settings.codeEnd;
@@ -42,10 +46,6 @@ class SerialHandler {
     this.commands = {
       status: settings.codeGetStatus,
       open: settings.codeOpening,
-    };
-    this.responses = {
-      status: settings.codeResponseStatus,
-      // allStatus = settings.codeResponseAllStatus;
     };
 
     this.port = new SerialPort({
@@ -55,15 +55,29 @@ class SerialHandler {
 
     this.port.on("open", () => {
       this.isOpen = true;
-      console.log("✅ Port série ouvert");
+      console.info("✅ Port série ouvert");
       if (this.retryInterval) {
         clearInterval(this.retryInterval);
       }
     });
 
     this.port.on("data", (data: Buffer) => {
-      console.log("📡 Données reçues :", data);
-      console.log("Should compare to code " + this.responses.status);
+      if(!this.lastMsgFromCU)
+        this.lastMsgFromCU=data
+      else {
+        let tmp = new Uint8Array(this.lastMsgFromCU.byteLength + data.byteLength);
+        tmp.set(new Uint8Array(this.lastMsgFromCU), 0);
+        tmp.set(new Uint8Array(data), this.lastMsgFromCU.byteLength);
+        this.lastMsgFromCU=tmp;
+      }
+
+      // Si 0.5s passent sans nouveau paquet, considérer le message comme complet
+      if (this.msgTimeout) {
+        clearTimeout(this.msgTimeout);
+      }
+      this.msgTimeout = setTimeout(() => {
+        this.receiveMessage();
+      }, 300);
     });
 
     this.port.on("error", (err) => {
@@ -72,7 +86,7 @@ class SerialHandler {
 
     this.port.on("close", () => {
       this.isOpen = false;
-      console.log("🔴 Port série fermé");
+      console.info("🔴 Port série fermé");
       this.retryConnection();
     });
   }
@@ -89,7 +103,8 @@ class SerialHandler {
     return SerialHandler.instance;
   }
 
-  public sendCommand(command: "open" | "getStatus", slot: number): void {
+  public sendCommand(command: "open" | "getStatus", slot=0): void {
+    const lockerType = process.env.LOCKER_TYPE
     let commandCode;
     switch (command) {
       case "open":
@@ -108,12 +123,13 @@ class SerialHandler {
     ];
 
     // CU16 and CU48 have slightly different protocols
-    const lockerType = process.env.LOCKER_TYPE
     if(lockerType==="CU48")
       message.splice(1,0,this.address)
 
     // In any case, checksum must be added at the end
     message.push(this.checksum(...message))
+
+    // console.debug("Serial Order to send", message.map(byte=>byte.toString(16)));
 
     if (!this.isOpen) {
       console.error("❌ Port série non disponible");
@@ -124,9 +140,27 @@ class SerialHandler {
       if (err) {
         console.error("❌ Erreur d'écriture sur le port série :", err);
       } else {
-        console.log("📤 Commande envoyée :", command);
+        //console.debug(`📤 Commande envoyée: ${command} ${slot}`);
       }
     });
+  }
+
+  private receiveMessage() {
+    // console.debug("📡 Données reçues :", this.lastMsgFromCU);
+    
+    // Remove affixes and unused data
+    let values:Number[] =[]
+    for(let i=3;i<this.lastMsgFromCU.length-4;i++)
+      values.push(this.lastMsgFromCU[i])
+
+    const lockersStatusBits = values.map((byte)=>byte.toString(2).padStart(8,"0")).reverse().join("").split("")
+    const openLockers = lockersStatusBits.reduce((acc, bit,index)=>{
+      if(bit==="0") return acc;
+      return [...acc, index+1]
+    },new Array())
+    this.locker.handleStatusUpdate(openLockers)
+    
+    this.lastMsgFromCU=new Uint8Array();
   }
 
   private retryConnection(): void {
@@ -136,10 +170,10 @@ class SerialHandler {
     }
     if (!this.retryInterval) {
       this.retryInterval = setInterval(() => {
-        console.log("🔄 Tentative de reconnexion au port série...");
+        console.info("🔄 Tentative de reconnexion au port série...");
         this.port.open((err) => {
           if (!err) {
-            console.log("✅ Reconnexion réussie au port série");
+            // console.debug("✅ Reconnexion réussie au port série");
             this.isOpen = true;
             clearInterval(this.retryInterval!);
           }
@@ -157,7 +191,7 @@ class SerialHandler {
     }
     try {
       this.port.update({ baudRate: baudRate });
-      console.log("🛠️ Configuration du port série mise à jour");
+      console.info("🛠️ Configuration du port série mise à jour");
     } catch (err) {
       console.error("❌ Impossible de configurer le port série:", err);
     }
@@ -169,7 +203,7 @@ class SerialHandler {
         if (err) {
           console.error("❌ Erreur à la fermeture du port :", err);
         } else {
-          console.log("🔴 Port série fermé");
+          console.info("🔴 Port série fermé");
         }
       });
     }

@@ -20,7 +20,7 @@ export default class HidReader {
   }
 
   private startListening() {
-    console.log("🟢 Démarrage de la lecture RFID...");
+    // console.debug("🟢 Démarrage de la lecture RFID...");
 
     const stream = fs.createReadStream(this.devicePath);
     stream.on("data", (data: Buffer) => {
@@ -45,7 +45,7 @@ export default class HidReader {
     const user = badges.find(
       (candidate) => candidate.uid === this.accumulatedData
     );
-    console.log("📡 Scan complet détecté, envoi de l'événement :", user?.label);
+    // console.debug("📡 Scan complet détecté, envoi de l'événement :", user?.label);
     SocketServer.getInstance().io.emit("rfid-event", {
       uid: user?.label,
     });
