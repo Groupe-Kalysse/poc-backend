@@ -21,7 +21,7 @@ export default class Locker {
         throw new Error("Wrong type of Locker type: " + lockerType);
     }
 
-    setInterval(this.getStatus, Number(process.env.TIMEOUT_STATUS));
+    // setInterval(this.getStatus, Number(process.env.TIMEOUT_STATUS));
   }
   public static getInstance(lockerType: string): Locker {
     if (!Locker.instance) {
@@ -47,11 +47,14 @@ export default class Locker {
   }
 
   handleStatusUpdate(newData: number[]) {
-    // console.debug(`
-    //   `);
-    // console.debug("Old status: ",this.openLockers);
-    // console.debug("new status: ",newData);
-    this.openLockers = newData;
-    this.openLockers;
+    console.debug(`
+      `);
+    console.debug("Old status: ",this.openLockers);
+    console.debug("New status: ",newData);
+    const newlyOpened = newData.filter((lockerId)=>!this.openLockers.includes(lockerId))
+    console.debug("Newly opened: ",newlyOpened);
+    const newlyClosed = this.openLockers.filter((lockerId)=>!newData.includes(lockerId))
+    console.debug("Newly closed: ",newlyClosed);
+    
   }
 }

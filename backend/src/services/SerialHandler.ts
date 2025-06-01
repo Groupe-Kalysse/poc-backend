@@ -127,7 +127,7 @@ class SerialHandler {
     // In any case, checksum must be added at the end
     message.push(this.checksum(...message));
 
-    // console.debug("Serial Order to send", message.map(byte=>byte.toString(16)));
+    console.debug("Serial Order to send", message.map(byte=>byte.toString(16)));
 
     if (!this.isOpen) {
       console.error("❌ Port série non disponible");
@@ -138,13 +138,13 @@ class SerialHandler {
       if (err) {
         console.error("❌ Erreur d'écriture sur le port série :", err);
       } else {
-        //console.debug(`📤 Commande envoyée: ${command} ${slot}`);
+        console.debug(`📤 Commande envoyée: ${command} ${slot}`);
       }
     });
   }
 
   private receiveMessage() {
-    // console.debug("📡 Données reçues :", this.lastMsgFromCU);
+    console.debug("📡 Données reçues :", this.lastMsgFromCU);
 
     // Remove affixes and unused data
     let values: Number[] = [];

@@ -29,7 +29,7 @@ router.post("/status", (_req, res) => {
     res.status(500);
     return;
   }
-  // TODO Implement correct behaviour
+  // TODO Implement correct behaviour  
   locker.getStatus();
   res.status(200).send();
 });
