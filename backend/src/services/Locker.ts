@@ -56,5 +56,6 @@ export default class Locker {
     const newlyClosed = this.openLockers.filter((lockerId)=>!newData.includes(lockerId))
     console.debug("Newly closed: ",newlyClosed);
     
+    this.openLockers = newData;
   }
 }
