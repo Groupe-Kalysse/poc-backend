@@ -1,13 +1,19 @@
 import pcsclite from "pcsclite";
 import SocketServer from "../SocketServer";
 import badges from "../../config/badges.json";
+import Locker from "../Locker";
 
 export default class PCSCReader {
   private static instance: PCSCReader;
   private pcsc = pcsclite();
-
+  private locker:Locker
+  
   private constructor() {
+    if (!process.env.LOCKER_TYPE)
+    throw new Error("Missing env: LOCKER_TYPE");
+
     this.startListening();
+    this.locker = Locker.getInstance(process.env.LOCKER_TYPE)
   }
 
   public static getInstance(): PCSCReader {
@@ -44,6 +50,12 @@ export default class PCSCReader {
               const uid = response.toString("hex").toUpperCase();
               console.debug("📡 UID reçu :", uid);
 
+              if(this.locker.canLock())
+                this.locker.lockByBadge(uid)
+              else 
+                this.locker.unlockByBadge(uid)
+
+              // Send to frontend
               const user = badges.find((candidate) => candidate.uid === uid);
               SocketServer.getInstance().io.emit("rfid-event", {
                 uid: user?.label ?? uid ?? "Inconnu",

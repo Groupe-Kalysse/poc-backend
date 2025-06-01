@@ -1,14 +1,19 @@
+import { Reservation } from "../database/Reservation";
 import { cu16, cu48 } from "../config/lockerTypes";
 import SerialHandler from "./SerialHandler";
 
 export default class Locker {
   private static instance: Locker;
   private totalSlots: number;
-  private openLockers: number[] = [];
+  private claimedLockers: number[] = [];
+  private tmpClosedLocker: number|undefined;
+  private badgeTimeout: number|undefined;
 
   private constructor(lockerType: string) {
     if (!process.env.TIMEOUT_STATUS)
       throw new Error("Missing env: TIMEOUT_STATUS");
+    if (!process.env.TIMEOUT_RESERVATION)
+      throw new Error("Missing env: TIMEOUT_RESERVATION");
 
     switch (lockerType) {
       case "CU48":
@@ -21,7 +26,7 @@ export default class Locker {
         throw new Error("Wrong type of Locker type: " + lockerType);
     }
 
-    // setInterval(this.getStatus, Number(process.env.TIMEOUT_STATUS));
+    setInterval(this.getStatus, Number(process.env.TIMEOUT_STATUS));
   }
   public static getInstance(lockerType: string): Locker {
     if (!Locker.instance) {
@@ -30,32 +35,105 @@ export default class Locker {
     return Locker.instance;
   }
 
-  unlock(slot: number): void {
-    if (slot < 0 || slot > this.totalSlots - 1) {
-      throw new Error(`Invalid slot number: ${slot}`);
+  public getData() {
+    return {
+      claimedLockers: this.claimedLockers,
+      tmpClosedLocker: this.tmpClosedLocker||"None",
     }
-    SerialHandler.getInstance().sendCommand("open", slot);
   }
 
-  lock(slot: number): void {
-    console.debug(`Opening locker ${slot} to lock`);
-    //TODO Implement the call to Serial
+  public canLock() {
+    return this.tmpClosedLocker!==undefined
+  }
+
+  async unlockByNumber(lockerNumber: number) {
+    if (lockerNumber < 0 || lockerNumber > this.totalSlots) {
+      throw new Error(`Invalid slot number: ${lockerNumber}`);
+    }
+    await Reservation.delete({lockerNumber})    
+    await SerialHandler.getInstance().sendCommand("open", lockerNumber);
+    this.claimedLockers=this.claimedLockers.filter(lockerId=>lockerId!==lockerNumber)
+  }
+
+  async unlockByBadge(badgeTrace: string) {
+    const reservation = await Reservation.findOneBy({badgeTrace})
+    console.log("Trying to unlock locker ",reservation?.lockerNumber);
+    if(reservation){
+      SerialHandler.getInstance().sendCommand("open", reservation.lockerNumber);
+      this.claimedLockers=this.claimedLockers.filter(lockerId=>lockerId!==reservation.lockerNumber)
+    }
+    else
+      throw new Error("this badge had no reservation")
+  }
+
+  unlockAll() {
+    //TODO Should be doable with ONE order
+    for(let i=0;i<this.totalSlots;i++){
+      setTimeout(()=>{
+        this.unlockByNumber(i)
+      },i*100)
+    }
+    this.tmpClosedLocker=undefined;
+  }
+
+  async lockByBadge(badgeTrace:string) {
+    if(!badgeTrace) {
+      console.debug("Can't lock without a proper badge signature")
+      return
+    }
+    
+    if(!this.tmpClosedLocker) {
+      console.debug("Can't lock an undefined locker")
+      return
+    }
+
+    console.debug(`Closing lock #${this.tmpClosedLocker} until badge or 12h have passed`);
+    const reserv = await Reservation.create({
+      lockerNumber:this.tmpClosedLocker,
+      badgeTrace,
+    }).save()
+    console.log(reserv);
+    
+    this.claimedLockers.push(this.tmpClosedLocker)
+    this.tmpClosedLocker=undefined
+    clearTimeout(this.badgeTimeout)
+
   }
 
   getStatus() {
     SerialHandler.getInstance().sendCommand("getStatus");
   }
 
-  handleStatusUpdate(newData: number[]) {
-    console.debug(`
-      `);
-    console.debug("Old status: ",this.openLockers);
-    console.debug("New status: ",newData);
-    const newlyOpened = newData.filter((lockerId)=>!this.openLockers.includes(lockerId))
-    console.debug("Newly opened: ",newlyOpened);
-    const newlyClosed = this.openLockers.filter((lockerId)=>!newData.includes(lockerId))
-    console.debug("Newly closed: ",newlyClosed);
+  async handleStatusUpdate(newData: number[]) {    
+    const newlyClosed = newData.filter((lockerId)=>!this.claimedLockers.includes(lockerId))
     
-    this.openLockers = newData;
+    // If we're already waiting for a badge, open everything & leave
+    if(this.tmpClosedLocker) {
+      newlyClosed.forEach(locker => {
+        this.unlockByNumber(locker-1)
+      });
+      return;
+    }
+
+    // If nothing has changed, leave
+    if(!newlyClosed.length) return;
+    
+    this.tmpClosedLocker = newlyClosed.shift()
+    
+    // Shouldn't happen
+    if(!this.tmpClosedLocker) return
+    
+    // Reopen other locks
+    newlyClosed.forEach(locker => {
+      this.unlockByNumber(locker-1)
+    });
+    
+    const tmpClosedLocker = this.tmpClosedLocker
+    console.log(`Waiting for a badge before closing #${this.tmpClosedLocker}`);    
+    setTimeout(()=>{
+      console.log(`Locker #${tmpClosedLocker} reopened after ${process.env.TIMEOUT_RESERVATION}ms without a badge scan`);
+      this.unlockByNumber(tmpClosedLocker)
+      this.tmpClosedLocker=undefined
+    }, Number(process.env.TIMEOUT_RESERVATION)*10)    
   }
 }

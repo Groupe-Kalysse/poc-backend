@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Locker from "../services/Locker";
+import { Reservation } from "../database/Reservation";
 
 const router = Router();
 
@@ -12,15 +13,23 @@ router.get("/health", (_req, res) => {
   res.send("OK!");
 });
 
+router.get("/system", (_req, res) => {
+  res.json({
+    Locker: locker.getData(),
+    Database:Reservation.find() 
+  });
+  return;
+});
+
 router.post("/open/:id", (req, res) => {
-  if (!lockerType) {
-    res.status(500);
-    return;
-  }
   const lockerId = Number(req.params.id);
-  // TODO Implement correct behaviour
-  locker.unlock(lockerId);
+  locker.unlockByNumber(lockerId);
   res.json({ message: "🔓 Casier ouvert !" });
+});
+
+router.post("/openAll", (_req, res) => {
+  locker.unlockAll();
+  res.json({ message: "🔓🔓🔓 Casiers ouverts !" });
 });
 
 router.post("/status", (_req, res) => {
@@ -29,7 +38,6 @@ router.post("/status", (_req, res) => {
     res.status(500);
     return;
   }
-  // TODO Implement correct behaviour  
   locker.getStatus();
   res.status(200).send();
 });

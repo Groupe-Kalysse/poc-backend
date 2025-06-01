@@ -102,7 +102,7 @@ class SerialHandler {
     return SerialHandler.instance;
   }
 
-  public sendCommand(command: "open" | "getStatus", slot = 0): void {
+  public async sendCommand(command: "open" | "getStatus", slot = 0) {
     const lockerType = process.env.LOCKER_TYPE;
     let commandCode;
     switch (command) {
@@ -127,24 +127,24 @@ class SerialHandler {
     // In any case, checksum must be added at the end
     message.push(this.checksum(...message));
 
-    console.debug("Serial Order to send", message.map(byte=>byte.toString(16)));
+    // console.debug("Serial Order to send", message.map(byte=>byte.toString(16)));
 
     if (!this.isOpen) {
       console.error("❌ Port série non disponible");
       return;
     }
 
-    this.port.write(message, (err) => {
+    await this.port.write(message, (err) => {
       if (err) {
         console.error("❌ Erreur d'écriture sur le port série :", err);
       } else {
-        console.debug(`📤 Commande envoyée: ${command} ${slot}`);
+        // console.debug(`📤 Commande envoyée: ${command} ${slot}`);
       }
     });
   }
 
   private receiveMessage() {
-    console.debug("📡 Données reçues :", this.lastMsgFromCU);
+    // console.debug("📡 Données reçues :", this.lastMsgFromCU);
 
     // Remove affixes and unused data
     let values: Number[] = [];
@@ -156,11 +156,11 @@ class SerialHandler {
       .reverse()
       .join("")
       .split("");
-    const openLockers = lockersStatusBits.reduce((acc, bit, index) => {
+    const closedLockers = lockersStatusBits.reduce((acc, bit, index) => {
       if (bit === "0") return acc;
       return [...acc, index + 1];
     }, new Array());
-    this.locker.handleStatusUpdate(openLockers);
+    this.locker.handleStatusUpdate(closedLockers);
 
     this.lastMsgFromCU = new Uint8Array();
   }
