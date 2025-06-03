@@ -13,10 +13,11 @@ router.get("/health", (_req, res) => {
   res.send("OK!");
 });
 
-router.get("/system", (_req, res) => {
+router.get("/system",async (_req, res) => {
+  const nbReservs =await Reservation.find() 
   res.json({
     Locker: locker.getData(),
-    Database:Reservation.find() 
+    Database: nbReservs.length 
   });
   return;
 });

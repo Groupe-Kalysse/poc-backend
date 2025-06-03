@@ -1,6 +1,7 @@
 import { Reservation } from "../database/Reservation";
 import { cu16, cu48 } from "../config/lockerTypes";
 import SerialHandler from "./SerialHandler";
+import SocketServer from "./SocketServer";
 
 export default class Locker {
   private static instance: Locker;
@@ -37,8 +38,9 @@ export default class Locker {
 
   public getData() {
     return {
+      totalSlots:this.totalSlots, 
       claimedLockers: this.claimedLockers,
-      tmpClosedLocker: this.tmpClosedLocker||"None",
+      tmpClosedLocker: this.tmpClosedLocker,
     }
   }
 
@@ -48,7 +50,7 @@ export default class Locker {
 
   async unlockByNumber(lockerNumber: number) {
     if (lockerNumber < 0 || lockerNumber > this.totalSlots) {
-      throw new Error(`Invalid slot number: ${lockerNumber}`);
+      return console.error(`Invalid slot number: ${lockerNumber}`);
     }
     await Reservation.delete({lockerNumber})    
     await SerialHandler.getInstance().sendCommand("open", lockerNumber);
@@ -57,13 +59,17 @@ export default class Locker {
 
   async unlockByBadge(badgeTrace: string) {
     const reservation = await Reservation.findOneBy({badgeTrace})
-    console.log("Trying to unlock locker ",reservation?.lockerNumber);
+    // console.log("Trying to unlock locker ",reservation?.lockerNumber);
     if(reservation){
       SerialHandler.getInstance().sendCommand("open", reservation.lockerNumber);
       this.claimedLockers=this.claimedLockers.filter(lockerId=>lockerId!==reservation.lockerNumber)
+      SocketServer.getInstance().io.emit("door-event", {
+        locker: reservation?.lockerNumber ,
+      });
+
     }
     else
-      throw new Error("this badge had no reservation")
+      console.error(`No reservation under badge #${badgeTrace}`)
   }
 
   unlockAll() {
@@ -88,16 +94,14 @@ export default class Locker {
     }
 
     console.debug(`Closing lock #${this.tmpClosedLocker} until badge or 12h have passed`);
-    const reserv = await Reservation.create({
+    await Reservation.save({
       lockerNumber:this.tmpClosedLocker,
       badgeTrace,
-    }).save()
-    console.log(reserv);
+    })
     
     this.claimedLockers.push(this.tmpClosedLocker)
     this.tmpClosedLocker=undefined
     clearTimeout(this.badgeTimeout)
-
   }
 
   getStatus() {
@@ -110,7 +114,9 @@ export default class Locker {
     // If we're already waiting for a badge, open everything & leave
     if(this.tmpClosedLocker) {
       newlyClosed.forEach(locker => {
-        this.unlockByNumber(locker-1)
+        console.log("Should open #",locker);
+        
+        this.unlockByNumber(locker)
       });
       return;
     }
@@ -125,7 +131,7 @@ export default class Locker {
     
     // Reopen other locks
     newlyClosed.forEach(locker => {
-      this.unlockByNumber(locker-1)
+      this.unlockByNumber(locker)
     });
     
     const tmpClosedLocker = this.tmpClosedLocker
@@ -134,6 +140,6 @@ export default class Locker {
       console.log(`Locker #${tmpClosedLocker} reopened after ${process.env.TIMEOUT_RESERVATION}ms without a badge scan`);
       this.unlockByNumber(tmpClosedLocker)
       this.tmpClosedLocker=undefined
-    }, Number(process.env.TIMEOUT_RESERVATION)*10)    
+    }, Number(process.env.TIMEOUT_RESERVATION))    
   }
 }
