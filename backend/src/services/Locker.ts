@@ -142,6 +142,10 @@ export default class Locker {
     const tmpClosedLocker = this.tmpClosedLocker;
     console.log(`Waiting for a badge before closing #${this.tmpClosedLocker}`);
     setTimeout(() => {
+      if (tmpClosedLocker !== this.tmpClosedLocker) {
+        console.log(`Locker #${tmpClosedLocker} safely reserved`);
+        return;
+      }
       console.log(
         `Locker #${tmpClosedLocker} reopened after ${process.env.TIMEOUT_RESERVATION}ms without a badge scan`
       );
