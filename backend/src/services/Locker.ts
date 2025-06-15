@@ -49,7 +49,7 @@ export default class Locker {
   }
 
   async unlockByNumber(lockerNumber: number) {
-    if (lockerNumber < 0 || lockerNumber > this.totalSlots) {
+    if (lockerNumber < 1 || lockerNumber > this.totalSlots) {
       return console.error(`Invalid slot number: ${lockerNumber}`);
     }
     await Reservation.delete({lockerNumber})    
@@ -74,7 +74,7 @@ export default class Locker {
 
   unlockAll() {
     //TODO Should be doable with ONE order
-    for(let i=0;i<this.totalSlots;i++){
+    for(let i=1;i<=this.totalSlots;i++){
       setTimeout(()=>{
         this.unlockByNumber(i)
       },i*100)
