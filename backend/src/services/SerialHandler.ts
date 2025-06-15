@@ -152,16 +152,21 @@ class SerialHandler {
       values.push(this.lastMsgFromCU[i]);
 
     const lockersStatusBits = values
-      .map((byte) => byte.toString(2).padStart(8, "0"))
+      .map((byte) => byte.toString(2).padStart(8, "0")) // number -> octets en string (ex: ["00101010", "10011001"])
+      .reverse() // remettre les octets dans le bon ordre pour la lecture (ex: ["10011001","00101010"])
+      .join("") // joindre les octets (ex: "1001100100101010")
+      .split("") // séparer les bits (ex: ["1","0","0",...])
       .reverse()
-      .join("")
-      .split("");
+
     const closedLockers = lockersStatusBits.reduce((acc, bit, index) => {
       if (bit === "0") return acc;
       return [...acc, index + 1];
     }, new Array());
-    this.locker.handleStatusUpdate(closedLockers);
 
+    // if(closedLockers.length)
+    //   console.debug("📡 Données reçues :", lockersStatusBits.join(), ...closedLockers)
+
+    this.locker.handleStatusUpdate(closedLockers);
     this.lastMsgFromCU = new Uint8Array();
   }
 
