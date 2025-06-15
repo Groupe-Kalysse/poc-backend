@@ -53,7 +53,7 @@ export default class Locker {
       return console.error(`Invalid slot number: ${lockerNumber}`);
     }
     await Reservation.delete({ lockerNumber });
-    await SerialHandler.getInstance().sendCommand("open", lockerNumber);
+    await SerialHandler.getInstance().sendCommand("open", lockerNumber - 1);
     this.claimedLockers = this.claimedLockers.filter(
       (lockerId) => lockerId !== lockerNumber
     );
