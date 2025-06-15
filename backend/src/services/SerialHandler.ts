@@ -153,7 +153,7 @@ class SerialHandler {
 
     const lockersStatusBits = values
       .map((byte) => byte.toString(2).padStart(8, "0"))
-      .reverse()
+      //.reverse()
       .join("")
       .split("");
     const closedLockers = lockersStatusBits.reduce((acc, bit, index) => {

@@ -145,8 +145,8 @@ export default class Locker {
       console.log(
         `Locker #${tmpClosedLocker} reopened after ${process.env.TIMEOUT_RESERVATION}ms without a badge scan`
       );
-      this.unlockByNumber(tmpClosedLocker);
       this.tmpClosedLocker = undefined;
+      this.unlockByNumber(tmpClosedLocker);
     }, Number(process.env.TIMEOUT_RESERVATION));
   }
 }
