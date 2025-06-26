@@ -23,3 +23,8 @@
   background-color: #ec7757;
   border: 1px solid #e63606;
 }
+
+.container .Terminal {
+  background-color: black;
+  border: 1px solid black;
+}

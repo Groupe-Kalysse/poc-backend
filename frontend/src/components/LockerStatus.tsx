@@ -23,6 +23,7 @@ function LockerStatus({ lockers }: Props) {
           </li>
         );
       })}
+      <li className="Terminal" />
     </ul>
   );
 }
