@@ -15,7 +15,7 @@
   background-color: #75aaeb;
   border: 1px solid #046dee;
   border-radius: 0.5rem;
-  aspect-ratio: 16/9;
+  aspect-ratio: 9/16;
 }
 
 .lockers .closed {
