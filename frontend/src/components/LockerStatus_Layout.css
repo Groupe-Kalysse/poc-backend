@@ -1,0 +1,81 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-auto-columns: 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "A01 A02 A03 A04 A05 A06"
+    "A01 A02 A03 A04 A05 A06"
+    "A07 A08 A09 A10 Terminal A11"
+    "A12 A13 A14 A15 A16 .";
+}
+
+.Terminal {
+  grid-area: Terminal;
+}
+
+.A01 {
+  grid-area: A01;
+}
+
+.A02 {
+  grid-area: A02;
+}
+
+.A03 {
+  grid-area: A03;
+}
+
+.A04 {
+  grid-area: A04;
+}
+
+.A05 {
+  grid-area: A05;
+}
+
+.A06 {
+  grid-area: A06;
+}
+
+.A07 {
+  grid-area: A07;
+}
+
+.A08 {
+  grid-area: A08;
+}
+
+.A09 {
+  grid-area: A09;
+}
+
+.A10 {
+  grid-area: A10;
+}
+
+.A11 {
+  grid-area: A11;
+}
+
+.A12 {
+  grid-area: A12;
+}
+
+.A13 {
+  grid-area: A13;
+}
+
+.A14 {
+  grid-area: A14;
+}
+
+.A15 {
+  grid-area: A15;
+}
+
+.A16 {
+  grid-area: A16;
+}

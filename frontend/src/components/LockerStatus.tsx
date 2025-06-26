@@ -1,4 +1,5 @@
 import "./LockerStatus.css";
+import "./LockerStatus_Layout.css";
 
 type Props = {
   lockers: {
@@ -14,7 +15,10 @@ function LockerStatus({ lockers }: Props) {
     <ul className="lockers">
       {lockers.map((locker) => {
         return (
-          <li key={locker.id} className={locker.status}>
+          <li
+            key={locker.id}
+            className={`${locker.status} ${locker.lockerNumber}`}
+          >
             {locker.lockerNumber}
           </li>
         );
