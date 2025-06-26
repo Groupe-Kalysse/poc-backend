@@ -49,7 +49,7 @@ router.get("/lockers", (_req, res) => {
   const reservations = lockers.map((id) => ({
     id: Math.floor(Math.random() * 48) + 1,
     lockerNumber: id,
-    status: "free",
+    status: id === "1" ? "claimed" : id === "16" ? "closed" : "free",
   }));
   res.send(reservations);
 });
