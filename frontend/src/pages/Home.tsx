@@ -16,7 +16,9 @@ function Home() {
         };
 
         const handleClosedDoor = (data: { locker: number }) => {
-            navigate(`/door/${data.locker}`)
+            console.log("Should receive the event");
+            
+            //navigate(`/door/${data.locker}`)
         };
 
         socket.on("rfid-event", handleBadge);

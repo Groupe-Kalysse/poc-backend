@@ -67,6 +67,8 @@ export default class Locker {
       this.claimedLockers = this.claimedLockers.filter(
         (lockerId) => lockerId !== reservation.lockerNumber
       );
+      console.log("Should emit the event");
+      
       SocketServer.getInstance().io.emit("door-event", {
         locker: reservation?.lockerNumber,
       });
