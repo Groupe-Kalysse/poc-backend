@@ -7,7 +7,7 @@ export default class Locker {
   private static instance: Locker;
   private totalSlots: number;
   private claimedLockers: number[] = [];
-  private tmpClosedLocker: number | undefined;
+  public tmpClosedLocker: number | undefined;
   private badgeTimeout: number | undefined;
 
   private constructor(lockerType: string) {
@@ -68,7 +68,7 @@ export default class Locker {
         (lockerId) => lockerId !== reservation.lockerNumber
       );
       console.log("Should emit the event");
-      
+
       SocketServer.getInstance().io.emit("door-event", {
         locker: reservation?.lockerNumber,
       });

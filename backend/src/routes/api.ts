@@ -43,15 +43,25 @@ router.post("/status", (_req, res) => {
   res.status(200).send();
 });
 
-router.get("/lockers", (_req, res) => {
+router.get("/lockers", async (_req, res) => {
   //fake
   const lockers = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16".split(" ");
-  const reservations = lockers.map((id) => ({
-    id: Math.floor(Math.random() * 48) + 1,
-    lockerNumber: id,
-    status: id === "1" ? "claimed" : id === "16" ? "closed" : "free",
-  }));
-  res.send(reservations);
+  const reservations = await Reservation.find();
+  const result = lockers.map((id) => {
+    let status = "free";
+    const isReserved = reservations.some(
+      (reserv) => reserv.lockerNumber === Number(id)
+    );
+    if (isReserved) status = "claimed";
+    if (locker.tmpClosedLocker === Number(id)) status = "claimed";
+
+    return {
+      id: Math.floor(Math.random() * 48) + 1,
+      lockerNumber: id,
+      status,
+    };
+  });
+  res.send(result);
 });
 
 export default router;
