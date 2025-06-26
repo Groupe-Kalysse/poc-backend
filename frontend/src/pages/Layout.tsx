@@ -12,7 +12,7 @@ function Layout() {
   }, []);
   return (
     <>
-      <h1>Kalysse - Casiers connectés</h1>
+      {/* <h1>Kalysse - Casiers connectés</h1> */}
       <div className="card">
         <Outlet />
       </div>
