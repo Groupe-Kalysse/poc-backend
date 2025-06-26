@@ -13,10 +13,8 @@ function LockerStatus({ lockers }: Props) {
   return (
     <ul className="lockers">
       {lockers.map((locker) => {
-        const claimed = locker.status === "claimed" ? "claimed" : "";
-        const closed = locker.status === "occupied" ? "closed" : "";
         return (
-          <li key={locker.id} className={`${claimed} ${closed}`}>
+          <li key={locker.id} className={locker.status}>
             {locker.lockerNumber}
           </li>
         );

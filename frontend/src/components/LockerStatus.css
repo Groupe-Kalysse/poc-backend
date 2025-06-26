@@ -10,9 +10,9 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: antiquewhite;
+  color: #fefefe;
   background-color: #aecbef;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   aspect-ratio: 16/9;
   border: 1px solid slategrey;
 }
