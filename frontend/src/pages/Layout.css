@@ -3,14 +3,15 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  list-style-type: none;
 }
 
 .blue {
   color: #75aaeb;
 }
 .orange {
-  color: #b93557;
+  color: #ec7757;
 }
 .red {
-  color: #e63606;
+  color: #b93557;
 }
