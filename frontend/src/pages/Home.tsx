@@ -44,7 +44,14 @@ function Home() {
   if (isConnected)
     return (
       <>
-        <LockerStatus lockers={status} />
+        <section>
+          <LockerStatus lockers={status} />
+          <p>
+            <span className="blue">Libre</span> -{" "}
+            <span className="orange">En réservation</span> -{" "}
+            <span className="red">Occupé</span>
+          </p>
+        </section>
         <h2>✅ Borne en attente d'instructions</h2>
         <ul>
           <li>Fermer une porte puis badger pour réserver un casier</li>
