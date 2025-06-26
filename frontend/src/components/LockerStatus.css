@@ -10,17 +10,20 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  font-size: 2rem;
   color: #fefefe;
   background-color: #75aaeb;
+  border: 1px solid #046dee;
   border-radius: 0.5rem;
   aspect-ratio: 16/9;
-  border: 1px solid slategrey;
 }
 
 .lockers .closed {
   background-color: #b93557;
+  border: 1px solid #b6022f;
 }
 
 .lockers .claimed {
   background-color: #ec7757;
+  border: 1px solid #e63606;
 }
