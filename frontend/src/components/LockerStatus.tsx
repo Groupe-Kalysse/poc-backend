@@ -12,7 +12,7 @@ function LockerStatus({ lockers }: Props) {
   if (!lockers) return <p>Status loading...</p>;
 
   return (
-    <ul className="lockers">
+    <ul className="container">
       {lockers.map((locker) => {
         return (
           <li

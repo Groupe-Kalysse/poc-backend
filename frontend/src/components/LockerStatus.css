@@ -1,11 +1,11 @@
-.lockers {
+.container {
   list-style-type: none;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 0.5rem 0.5rem;
 }
 
-.lockers li {
+.container li {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,12 +18,12 @@
   aspect-ratio: 10/25;
 }
 
-.lockers .closed {
+.container .closed {
   background-color: #b93557;
   border: 1px solid #b6022f;
 }
 
-.lockers .claimed {
+.container .claimed {
   background-color: #ec7757;
   border: 1px solid #e63606;
 }
