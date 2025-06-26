@@ -6,7 +6,7 @@ import LockerStatus from "../components/LockerStatus";
 function Home() {
   const { socket, isConnected } = useSocket();
   const navigate = useNavigate();
-  const [status, setStatus] = useState(undefined);
+  const [status, setStatus] = useState([]);
 
   useEffect(() => {
     if (!socket) return;
@@ -44,7 +44,7 @@ function Home() {
   if (isConnected)
     return (
       <>
-        <LockerStatus {...status} />
+        <LockerStatus lockers={status} />
         <h2>✅ Borne en attente d'instructions</h2>
         <ul>
           <li>Fermer une porte puis badger pour réserver un casier</li>

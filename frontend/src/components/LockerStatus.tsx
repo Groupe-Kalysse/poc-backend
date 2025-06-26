@@ -1,25 +1,28 @@
 import "./LockerStatus.css";
 
 type Props = {
-    Locker:{
-        totalSlots:number;
-        claimedLockers: number[];
-        tmpClosedlocker?:number
-    };
-    Database:number
-}
-function LockerStatus({Locker}:Props) {
-    if(!Locker) return <p>Status loading...</p>
+  lockers: {
+    id: number;
+    lockerNumber: string;
+    status: string;
+  }[];
+};
+function LockerStatus({ lockers }: Props) {
+  if (!lockers) return <p>Status loading...</p>;
 
-    return(
-        <ul className="lockers">
-            {Array.from(Array(Locker.totalSlots).keys()).map(locker=>{
-                const claimed = Locker.claimedLockers.includes(locker) ? "claimed":""
-                const closed = Locker.tmpClosedlocker===locker ? "closed":""
-                return <li key={locker} className={`${claimed} ${closed}`}>{locker}</li>
-            })}
-        </ul>
-    )
+  return (
+    <ul className="lockers">
+      {lockers.map((locker) => {
+        const claimed = locker.status === "claimed" ? "claimed" : "";
+        const closed = locker.status === "occupied" ? "closed" : "";
+        return (
+          <li key={locker.id} className={`${claimed} ${closed}`}>
+            {locker.lockerNumber}
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 export default LockerStatus;
