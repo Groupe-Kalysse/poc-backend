@@ -1,6 +1,7 @@
 import { Router } from "express";
 import Locker from "../services/Locker";
 import { Reservation } from "../database/Reservation";
+import lockersConfig from "../config/lockers.json";
 
 const router = Router();
 
@@ -49,6 +50,8 @@ router.get("/lockers", async (_req, res) => {
   const reservations = await Reservation.find();
   const result = lockers.map((id) => {
     let status = "free";
+    const data = lockersConfig.find((locker) => locker.port === Number(id));
+    if (!data) return;
     const isReserved = reservations.some(
       (reserv) => reserv.lockerNumber === Number(id)
     );
@@ -56,8 +59,8 @@ router.get("/lockers", async (_req, res) => {
     if (locker.tmpClosedLocker === Number(id)) status = "claimed";
 
     return {
-      id: Number(id),
-      lockerNumber: id,
+      id: data.port,
+      lockerNumber: data.label,
       status,
     };
   });
