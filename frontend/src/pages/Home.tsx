@@ -30,7 +30,7 @@ function Home() {
   }, [socket]);
 
   useEffect(() => {
-    fetch("/api/system", {
+    fetch("/api/lockers", {
       method: "GET",
     })
       .then((res) => res.json())
