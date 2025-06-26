@@ -1,23 +1,26 @@
 .lockers {
-    list-style-type: none;
-    display: grid; 
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
-    gap: 1rem 1rem;
+  list-style-type: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 1rem 1rem;
 }
 
 .lockers li {
-    display:flex;
-    align-items: center;
-    justify-content: center;
-    border-radius:1rem;
-    aspect-ratio: 1;
-    border: 1px solid slategrey
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: antiquewhite;
+  background-color: #aecbef;
+  border-radius: 1rem;
+  aspect-ratio: 16/9;
+  border: 1px solid slategrey;
 }
 
 .lockers .closed {
-    background-color: yellowgreen;
+  background-color: #b93557;
 }
 
 .lockers .claimed {
-    background-color: red;
+  background-color: #ec7757;
 }
