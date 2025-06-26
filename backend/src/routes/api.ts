@@ -13,11 +13,11 @@ router.get("/health", (_req, res) => {
   res.send("OK!");
 });
 
-router.get("/system",async (_req, res) => {
-  const nbReservs =await Reservation.find() 
+router.get("/system", async (_req, res) => {
+  const nbReservs = await Reservation.find();
   res.json({
     Locker: locker.getData(),
-    Database: nbReservs.length 
+    Database: nbReservs.length,
   });
   return;
 });
@@ -41,6 +41,17 @@ router.post("/status", (_req, res) => {
   }
   locker.getStatus();
   res.status(200).send();
+});
+
+router.get("/lockers", (_req, res) => {
+  //fake
+  const lockers = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16".split(" ");
+  const reservations = lockers.map((id) => ({
+    id: Math.floor(Math.random() * 48) + 1,
+    lockerNumber: id,
+    status: "free",
+  }));
+  res.send(reservations);
 });
 
 export default router;
