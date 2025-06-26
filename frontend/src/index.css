@@ -67,6 +67,10 @@ li {
   list-style-type: none;
 }
 
+section {
+  min-height: 50vh;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
