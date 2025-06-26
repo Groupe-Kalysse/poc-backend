@@ -56,7 +56,7 @@ router.get("/lockers", async (_req, res) => {
     if (locker.tmpClosedLocker === Number(id)) status = "claimed";
 
     return {
-      id: Math.floor(Math.random() * 48) + 1,
+      id: Number(id),
       lockerNumber: id,
       status,
     };
