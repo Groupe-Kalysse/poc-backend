@@ -1,27 +1,27 @@
 [
   {
-    "uid": "' $ ''#! \"(",
-    "label": "Loic",
+    "id": "' $ ''#! \"(",
+    "name": "Loic",
     "role": "staff"
   },
   {
-    "uid": "'\"'#'#$$(",
-    "label": "Romain",
+    "id": "'\"'#'#$$(",
+    "name": "Romain",
     "role": "staff"
   },
   {
-    "uid": "'\"'!#% \"(",
-    "label": "Delphine",
+    "id": "'\"'!#% \"(",
+    "name": "Delphine",
     "role": "staff"
   },
   {
-    "uid": "'$# #%!$(",
-    "label": "Spare Badge 1",
+    "id": "'$# #%!$(",
+    "name": "Spare Badge 1",
     "role": "staff"
   },
   {
-    "uid": "'&$'###! (",
-    "label": "Spare Badge 2",
+    "id": "'&$'###! (",
+    "name": "Spare Badge 2",
     "role": "staff"
   }
 ]

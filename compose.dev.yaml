@@ -42,15 +42,17 @@ services:
       - ./backend/src:/app/src/
       - /run/pcscd:/run/pcscd
     environment:
-      RFID_TYPE: ${RFID_TYPE}
+      BADGE_TYPE: ${BADGE_TYPE}
       LOCKER_TYPE: ${LOCKER_TYPE}
-      SERIAL_PATH: ${SERIAL_PATH}
-      TIMEOUT_STATUS: ${TIMEOUT_STATUS}
+      NFC_TYPE: ${NFC_TYPE}
+      SERIAL_TYPE: ${SERIAL_TYPE}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: ${DB_DATABASE}
       DB_USER: ${DB_USER}
       DB_HOST: ${DB_HOST}
-      TIMEOUT_RESERVATION: ${TIMEOUT_RESERVATION}
+      # SERIAL_PATH: ${SERIAL_PATH}
+      # TIMEOUT_STATUS: ${TIMEOUT_STATUS}
+      # TIMEOUT_RESERVATION: ${TIMEOUT_RESERVATION}
 
   frontend:
     container_name: frontend
