@@ -32,7 +32,7 @@ export class Cu16Serial {
     this.commandBus.listenEvent("locker-status", this.status);
   }
   unlock = (command: Command) => {
-    const num = command.payload?.num as number;
+    const num = command.payload?.port as number;
     const commandToSerial = this.buildCommand("open", num);
     this.send(commandToSerial);
     this.commandBus.fireEvent({
