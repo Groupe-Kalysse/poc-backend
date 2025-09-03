@@ -86,7 +86,7 @@ export default class PcscReader {
     this.commandBus.fireEvent({
       label: "nfc-hit",
       type: "info",
-      message: `📡 Hit HID: ${data}`,
+      message: `📡 Hit PCSC: ${data}`,
       payload: {
         trace: data,
       },
