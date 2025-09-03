@@ -32,7 +32,7 @@ export class Cu48Serial {
     this.commandBus.listenEvent("locker-open", this.unlock);
     this.commandBus.listenEvent("locker-status", this.status);
   }
-  private unlock(command: Command) {
+  unlock = (command: Command) => {
     const num = command.payload?.num as number;
     const commandToSerial = this.buildCommand("open", num);
     this.send(commandToSerial);
@@ -42,16 +42,13 @@ export class Cu48Serial {
       message: `🪛 Opened lock#${num} via cu48Serial `,
       payload: {},
     });
-  }
-  private status(_command: Command) {
+  };
+  status = (_command: Command) => {
     const commandToSerial = this.buildCommand("open");
     this.send(commandToSerial);
-  }
+  };
 
-  private buildCommand(
-    command: "open" | "getStatus",
-    slot: number = 0
-  ): number[] {
+  buildCommand = (command: "open" | "getStatus", slot: number = 0) => {
     let commandCode;
     switch (command) {
       case "open":
@@ -72,13 +69,13 @@ export class Cu48Serial {
 
     message.push(this.checksum(...message));
     return message;
-  }
+  };
 
-  private checksum(...values: number[]): number {
+  checksum = (...values: number[]) => {
     return values.reduce((acc, val) => acc + val, 0);
-  }
+  };
 
-  private onData(data: Uint8Array<ArrayBuffer>): void | Promise<void> {
+  onData = (data: Uint8Array<ArrayBuffer>) => {
     let values: Number[] = [];
     for (let i = 3; i < data.length - 4; i++) values.push(data[i]);
     const locksStatusBits = values
@@ -102,17 +99,17 @@ export class Cu48Serial {
       type: "info",
       message: `👁️ Updated status from cu48Serial: ${closedLockers.length} locks closed`,
     });
-  }
+  };
 
-  private send(data: number[]): void | Promise<void> {
+  send = (data: number[]) => {
     this.portHandle.write(data, (err) => {
       if (err) {
         throw err;
       }
     });
-  }
+  };
 
-  private onDataChunk(data: Uint8Array<ArrayBuffer>) {
+  onDataChunk = (data: Uint8Array<ArrayBuffer>) => {
     if (!this.lastMsgFromCU) this.lastMsgFromCU = data;
     else {
       let tmp = new Uint8Array(this.lastMsgFromCU.byteLength + data.byteLength);
@@ -129,5 +126,5 @@ export class Cu48Serial {
       this.onData(this.lastMsgFromCU);
       this.lastMsgFromCU = new Uint8Array();
     }, this.dataTimeout);
-  }
+  };
 }

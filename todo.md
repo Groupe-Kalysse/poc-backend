@@ -35,6 +35,12 @@
 - ✅ cu16
 - ✅ cu48
 
-### others
+## others
+
+### Realtime back-front
 
 - api back->front
+
+### Deploiement borne
+
+- git pull
