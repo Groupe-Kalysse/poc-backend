@@ -26,6 +26,7 @@ export class JsonLocker {
     }));
     this.openAllLocks();
     this.commandBus.listenEvent("serial-status", this.onUpdatedStatus);
+    this.commandBus.listenEvent("api-openAll", this.openAllLocks);
   }
 
   onBadge(): void | Promise<void> {}

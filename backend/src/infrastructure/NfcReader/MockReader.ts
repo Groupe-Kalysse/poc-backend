@@ -2,7 +2,7 @@ import CommBus from "../CommBus";
 
 export default class MockReader {
   private commandBus: CommBus;
-  private emitInterval = 5_000;
+  private emitInterval = 300_000;
   private success = true;
 
   constructor(commandBus: CommBus) {
