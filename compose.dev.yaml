@@ -85,3 +85,23 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_HOST: ${DB_HOST}
+
+  adminer:
+    <<: *baseService
+    container_name: adminer
+    image: adminer
+    depends_on:
+      database:
+        condition: service_healthy
+    command:
+      [
+        "php",
+        "-d",
+        "post_max_size=500M",
+        "-d",
+        "upload_max_filesize=500M",
+        "-S",
+        "0.0.0.0:8080",
+        "-t",
+        "/var/www/html",
+      ]

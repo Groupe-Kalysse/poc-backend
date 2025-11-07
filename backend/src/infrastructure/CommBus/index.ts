@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { CommandLog } from "../Database/entities/CommandLog";
 
 export type Command = {
   label: string;
@@ -57,5 +58,12 @@ export default class CommBus {
         console.log(chalk.cyan(message));
         break;
     }
+    CommandLog.create({
+      createdAt: new Date(),
+      label: command.label,
+      payload: JSON.stringify(command.payload || {}),
+      message: command.message,
+      type: command.type,
+    }).save();
   }
 }

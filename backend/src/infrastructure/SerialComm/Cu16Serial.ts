@@ -42,7 +42,7 @@ export class Cu16Serial {
     });
   };
   status = (_command: Command) => {
-    const commandToSerial = this.buildCommand("open");
+    const commandToSerial = this.buildCommand("getStatus");
     this.send(commandToSerial);
   };
 
