@@ -1,5 +1,7 @@
 import lockers from "../../config/lockers.json";
 import CommBus from "../CommBus";
+import { dataSource } from "../Database/dataSource";
+import { Locker } from "../Database/entities/Locker";
 
 type Lock = {
   label: string;
@@ -27,6 +29,15 @@ export class JsonLocker {
     this.openAllLocks();
     this.commandBus.listenEvent("serial-status", this.onUpdatedStatus);
     this.commandBus.listenEvent("api-openAll", this.openAllLocks);
+
+    const newLockers = Locker.create(
+      this.state.map((locker) => ({
+        lockerNumber: locker.label,
+        status: "open",
+      }))
+    );
+    const repo = dataSource.getRepository(Locker);
+    repo.save(newLockers);
   }
 
   onBadge(): void | Promise<void> {}

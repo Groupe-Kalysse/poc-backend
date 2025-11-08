@@ -1,4 +1,6 @@
 import CommBus, { Command } from "../CommBus";
+import { dataSource } from "../Database/dataSource";
+import { Locker } from "../Database/entities/Locker";
 
 type Lock = {
   label: string;
@@ -32,6 +34,15 @@ export default class MockLocker {
     this.open = true;
     this.commandBus.listenEvent("serial-status", this.onUpdatedStatus);
     this.commandBus.listenEvent("badge-hit", this.onBadge);
+
+    const newLockers = Locker.create(
+      this.locks.map((locker) => ({
+        lockerNumber: locker.label,
+        status: "open",
+      }))
+    );
+    const repo = dataSource.getRepository(Locker);
+    repo.save(newLockers);
   }
 
   onBadge = (_command: Command) => {

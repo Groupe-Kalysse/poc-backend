@@ -6,10 +6,9 @@ const router = Router();
 router.get("/health", (_, res) => {
   res.send("OK!");
 });
-router.get("/lockers", (_, res) => {
-  // TODO: plug to a database
-
-  return res.json(Locker.find());
+router.get("/lockers", async (_, res) => {
+  const lockers = await Locker.find();
+  return res.json(lockers);
 });
 
 export default router;
