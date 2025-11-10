@@ -6,7 +6,6 @@ import LockerStatus from "../components/LockerStatus";
 function Home() {
   const { socket, isConnected } = useSocket();
   const navigate = useNavigate();
-  const [status, setStatus] = useState([]);
 
   useEffect(() => {
     if (!socket) return;
@@ -29,23 +28,11 @@ function Home() {
     };
   }, [socket]);
 
-  useEffect(() => {
-    fetch("/api/lockers", {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        //setStatus(res)
-        //Debug front
-        setStatus(res);
-      });
-  }, []);
-
   if (isConnected)
     return (
       <>
         <section>
-          <LockerStatus lockers={status} />
+          <LockerStatus />
           <p>
             <span className="blue">Libre</span> -{" "}
             <span className="orange">En réservation</span> -{" "}

@@ -1,60 +1,46 @@
-- ✅ messages back>front
-- ✅ badges RFID
-  - ✅ lecteur en mode HID
-  - ✅ lecteur en mode PCSC
-  - ✅ vraie phase de test nécessaire sur le matériel final
-- ordres (port serie)
-- reimplementer database
-- centraliser configs
+# Reste à faire
 
-## Analyse Python
+## infrastructure
 
-### settings.py
+### ✅ badgeCollection
 
-Fichier de config, contient pour chaque typologie de coupleur:
+- ✅ switch
+- ✅ mock
+- ✅ json
 
-- startCode:
-- adresse:
-- codeGetStatus:
-- codeOpening:
-- codeResponseStatus:
-- endCode:
-- lockerNumber: Nombre de verrous
+### communicationBus
 
-### utils_API.py
+- ✅ commBus
+- archi handlers generiques
+  - logger: refactor to a separate file & add options
+  - record db
 
-Fichier de déclaration de fonctions:
+### ✅ lockerManager
 
-- get_list_of_all_IP_interfaces
-- get_token_API
-- get_borne_ID_from_API
-- get_info_borne_dans_BDD_API
+- ✅ switch
+- ✅ mock
+- ✅ json
 
-### commandLocker.py
+### ✅ nfcReader
 
-Fichier de déclaration de fonctions relatives au Locker:
+- ✅ switch
+- ✅ mock
+- ✅ hid
+- ✅ pcsc
 
-- openLocker
-- getStatus
+### ✅ serialCommunication
 
-### lockerHandle.py
+- ✅ switch
+- ✅ mock
+- ✅ cu16
+- ✅ cu48
 
-... Tout le reste ? 🤷
+## others
 
-- Init: Initialisation des variables de fonctionnement
-  - Récupération du port série pour la communication
-  - Pour chaque port potentiel (255):
-    - Tentative d'ouverture du port, d'envoi et de réception de messages avec le CU
-    - Initialisation de l'état des casiers avec celui récupéré lors de la connexion
-    - Initialisation de la date de la session
-- run
-- checkState: Vérifie l'état physique des casiers par rapport à l'état souhaité
-  - Pour chaque casier:
-    - vérifie s'il y a des changements à effectuer
-      - Casier fermé alors qu'il doit être ouvert
-      - Casier ouvert alors qu'il doit être fermé
-      - Quand l'attente est trop longue pour la fermeture
-      - Ouverture inattendue
-      - Fermeture non souhaitée
-      - Casier correctement fermé
-    - Si le casier est dans le bon etat on reinitialise le compteur
+### Realtime back-front
+
+- api back->front
+
+### Deploiement borne
+
+- git pull

@@ -26,10 +26,10 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
-    devices:
-      - /dev/hidraw1:/dev/hidraw1
-      - /dev/bus/usb:/dev/bus/usb
-      - /dev/ttyUSB0:/dev/ttyUSB0
+    # devices:
+    #   - /dev/hidraw1:/dev/hidraw1
+    #   - /dev/bus/usb:/dev/bus/usb
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
     ports:
       - "3001:3001"
     healthcheck:
@@ -42,15 +42,17 @@ services:
       - ./backend/src:/app/src/
       - /run/pcscd:/run/pcscd
     environment:
-      RFID_TYPE: ${RFID_TYPE}
+      BADGE_TYPE: ${BADGE_TYPE}
       LOCKER_TYPE: ${LOCKER_TYPE}
-      SERIAL_PATH: ${SERIAL_PATH}
-      TIMEOUT_STATUS: ${TIMEOUT_STATUS}
+      NFC_TYPE: ${NFC_TYPE}
+      SERIAL_TYPE: ${SERIAL_TYPE}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: ${DB_DATABASE}
       DB_USER: ${DB_USER}
       DB_HOST: ${DB_HOST}
-      TIMEOUT_RESERVATION: ${TIMEOUT_RESERVATION}
+      # SERIAL_PATH: ${SERIAL_PATH}
+      # TIMEOUT_STATUS: ${TIMEOUT_STATUS}
+      # TIMEOUT_RESERVATION: ${TIMEOUT_RESERVATION}
 
   frontend:
     container_name: frontend
@@ -77,9 +79,29 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d ${DB_DATABASE} -U ${DB_USER}"]
     volumes:
-      - ./persist/db-dev:/var/lib/postgresql/data
+      - ./persist/db-dev:/var/lib/postgresql
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_HOST: ${DB_HOST}
+
+  adminer:
+    <<: *baseService
+    container_name: adminer
+    image: adminer
+    depends_on:
+      database:
+        condition: service_healthy
+    command:
+      [
+        "php",
+        "-d",
+        "post_max_size=500M",
+        "-d",
+        "upload_max_filesize=500M",
+        "-S",
+        "0.0.0.0:8080",
+        "-t",
+        "/var/www/html",
+      ]
