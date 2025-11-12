@@ -34,6 +34,7 @@ export default class MockLocker {
     this.open = true;
     this.commandBus.listenEvent("serial-status", this.onUpdatedStatus);
     this.commandBus.listenEvent("badge-hit", this.onBadge);
+    this.commandBus.listenEvent("web-asked-claim", this.claimLock);
 
     const newLockers = Locker.create(
       this.locks.map((locker) => ({
@@ -55,7 +56,10 @@ export default class MockLocker {
     // TODO ?
   }
 
-  claimLock(num: number) {
+  claimLock = (command: Command) => {
+    console.log("BOOYAH?");
+
+    const num = Number(command.payload?.id);
     if (this.claimedLock !== null) {
       this.commandBus.fireEvent({
         label: "locker-claim-miss",
@@ -64,7 +68,8 @@ export default class MockLocker {
       });
       return;
     }
-    this.claimedLock = this.locks.find((lock) => lock.port === num) || null;
+    this.claimedLock =
+      this.locks.find((lock) => lock.port === command.payload?.id) || null;
     if (this.claimedLock) {
       this.commandBus.fireEvent({
         label: "locker-claim",
@@ -76,7 +81,7 @@ export default class MockLocker {
         this.freeLock(num);
       }, this.claimTime);
     }
-  }
+  };
 
   freeLock = (num: number) => {
     if (this.claimedLock?.port === num) {
