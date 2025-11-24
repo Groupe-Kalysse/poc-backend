@@ -30,6 +30,7 @@ export class JsonLocker {
     this.commandBus.listenEvent("serial-status", this.onUpdatedStatus);
     this.commandBus.listenEvent("api-openAll", this.openAllLocks);
     this.commandBus.listenEvent("web-asked-claim", this.claimLock);
+    this.commandBus.listenEvent("web-asked-free", this.freeLock);
 
     const newLockers = Locker.create(
       this.state.map((locker) => ({
@@ -63,16 +64,29 @@ export class JsonLocker {
       payload: {},
     });
     this.claimFlag = setTimeout(() => {
-      this.freeLock(num);
+      this.freeLock(command);
     }, 5000);
   };
-  freeLock(num: number): void | Promise<void> {
-    if (this.claimedLocker === num) {
-      this.claimedLocker = null;
-      //TODO Unclaim
-      if (this.claimFlag) clearTimeout(this.claimFlag);
+  freeLock = (command: Command) => {
+    const num = Number(command.payload?.id);
+    if (this.claimedLocker === null) {
+      this.commandBus.fireEvent({
+        label: "locker-free-miss",
+        type: "warning",
+        message: `⚠️ Unable to free locker#${num}`,
+        payload: {},
+      });
+      return;
     }
-  }
+    this.claimedLocker = null;
+    this.commandBus.fireEvent({
+      label: "locker-free",
+      type: "info",
+      message: `✋ Freed locker#${num}`,
+      payload: {},
+    });
+    if (this.claimFlag) clearTimeout(this.claimFlag);
+  };
 
   closeLock(num: number): void | Promise<void> {
     const lock = this.state.find((lock) => lock.port === num);

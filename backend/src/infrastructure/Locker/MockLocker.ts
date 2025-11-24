@@ -57,8 +57,6 @@ export default class MockLocker {
   }
 
   claimLock = (command: Command) => {
-    console.log("BOOYAH?");
-
     const num = Number(command.payload?.id);
     if (this.claimedLock !== null) {
       this.commandBus.fireEvent({

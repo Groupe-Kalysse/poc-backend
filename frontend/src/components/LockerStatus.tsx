@@ -16,11 +16,7 @@ function LockerStatus() {
     })
       .then((res) => res.json())
       .then((res) => {
-        const newState = lockers.map((candidate) => {
-          if (candidate.id !== res.id) return candidate;
-          return res;
-        });
-        setLockers(newState);
+        setLockers(res);
       });
   }
 
