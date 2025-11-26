@@ -1,66 +1,66 @@
 [
   {
-    "label": "A01",
+    "lockerNumber": "A01",
     "port": 0
   },
   {
-    "label": "A02",
+    "lockerNumber": "A02",
     "port": 1
   },
   {
-    "label": "A03",
+    "lockerNumber": "A03",
     "port": 2
   },
   {
-    "label": "A04",
+    "lockerNumber": "A04",
     "port": 3
   },
   {
-    "label": "A05",
+    "lockerNumber": "A05",
     "port": 4
   },
   {
-    "label": "A06",
+    "lockerNumber": "A06",
     "port": 5
   },
   {
-    "label": "A07",
+    "lockerNumber": "A07",
     "port": 6
   },
   {
-    "label": "A08",
+    "lockerNumber": "A08",
     "port": 7
   },
   {
-    "label": "A09",
+    "lockerNumber": "A09",
     "port": 8
   },
   {
-    "label": "A10",
+    "lockerNumber": "A10",
     "port": 9
   },
   {
-    "label": "A11",
+    "lockerNumber": "A11",
     "port": 10
   },
   {
-    "label": "A12",
+    "lockerNumber": "A12",
     "port": 11
   },
   {
-    "label": "A13",
+    "lockerNumber": "A13",
     "port": 12
   },
   {
-    "label": "A14",
+    "lockerNumber": "A14",
     "port": 13
   },
   {
-    "label": "A15",
+    "lockerNumber": "A15",
     "port": 14
   },
   {
-    "label": "A16",
+    "lockerNumber": "A16",
     "port": 15
   }
 ]

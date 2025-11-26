@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import "./LockerStatus.css";
 import "./LockerStatus_Layout.css";
+import { useSocket } from "../hooks/useSocket";
 
 type Lockers = {
   id: number;
   lockerNumber: string;
-  status: string;
+  status: "open" | "closed" | "claimed";
 }[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
+  const { socket } = useSocket();
 
   async function updateLocker(num: number) {
     await fetch(`/api/lockers/${num}`, {
@@ -29,6 +31,24 @@ function LockerStatus() {
         setLockers(res);
       });
   }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const hFeedback = (data: { locks: Lockers }) => {
+      console.log(data.locks);
+
+      setLockers(data.locks);
+    };
+
+    socket.on("claim", hFeedback);
+    socket.on("free", hFeedback);
+
+    return () => {
+      socket.off("claim", hFeedback);
+      socket.off("free", hFeedback);
+    };
+  }, [socket]);
 
   if (!lockers) return <p>Status loading...</p>;
 
