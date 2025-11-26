@@ -31,9 +31,10 @@ function LockerStatus() {
       method: "PUT",
     });
   }
-  async function freeLocker(num: number) {
+  async function freeLocker() {
     console.log("free ", focusedLocker?.id);
-    await fetch(`/api/lockers/${num}/free`, {
+    if (!focusedLocker) return;
+    await fetch(`/api/lockers/${focusedLocker.id}/free`, {
       method: "PUT",
     });
     setFocus(null);
