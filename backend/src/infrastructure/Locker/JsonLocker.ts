@@ -17,6 +17,7 @@ export class JsonLocker {
   private state: LockerType[];
 
   constructor(commandBus: CommBus) {
+    const repo = dataSource.getRepository(Locker);
     this.commandBus = commandBus;
     this.claimedLocker = null;
 
@@ -26,15 +27,15 @@ export class JsonLocker {
         status: "open",
       }))
     );
+    repo.save(newLockers);
     this.state = newLockers;
     this.openAllLocks();
     this.commandBus.listenEvent("serial-status", this.onUpdatedStatus);
     this.commandBus.listenEvent("api-openAll", this.openAllLocks);
     this.commandBus.listenEvent("web-asked-claim", this.claimLock);
     this.commandBus.listenEvent("web-asked-free", this.freeLock);
-
-    const repo = dataSource.getRepository(Locker);
-    repo.save(newLockers);
+    this.commandBus.listenEvent("web-asked-open", this.openLock);
+    this.commandBus.listenEvent("web-asked-close", this.closeLock);
   }
 
   onBadge(): void | Promise<void> {}
@@ -97,8 +98,8 @@ export class JsonLocker {
     if (this.claimFlag) clearTimeout(this.claimFlag);
   };
 
-  closeLock(num: number): void | Promise<void> {
-    const lock = this.state.find((lock) => lock.id === num);
+  closeLock = (command: Command) => {
+    const lock = this.state.find((lock) => lock.id === command.payload?.id);
     if (!lock) return;
 
     this.commandBus.fireEvent({
@@ -114,17 +115,23 @@ export class JsonLocker {
       if (candidate.id !== lock.id) return candidate;
       return { ...candidate, status: "closed" };
     });
-  }
+  };
   closeAllLocks(): void | Promise<void> {
     for (let i = 0; i <= this.state.length; i++) {
       setTimeout(() => {
-        this.closeLock(this.state[i].id);
+        // this.closeLock(this.state[i].id);
+        this.closeLock({
+          label: "irrelevant-internal-event",
+          message: "This is a bandaid to spare time, plz fix",
+          type: "warning",
+          payload: { id: i },
+        });
       }, i * 100);
     }
   }
 
-  openLock(num: number): void | Promise<void> {
-    const lock = this.state.find((lock) => lock.id === num);
+  openLock = (command: Command) => {
+    const lock = this.state.find((lock) => lock.id === command.payload?.id);
     if (!lock) return;
 
     this.commandBus.fireEvent({
@@ -140,12 +147,19 @@ export class JsonLocker {
       if (candidate.id !== lock.id) return candidate;
       return { ...candidate, status: "open" };
     });
-  }
-  openAllLocks(): void | Promise<void> {
-    for (let i = 0; i < this.state.length; i++) {
+  };
+  openAllLocks = () => {
+    console.log(this.state);
+
+    for (let i = 1; i <= this.state.length; i++) {
       setTimeout(() => {
-        this.openLock(this.state[i].id);
+        this.openLock({
+          label: "irrelevant-internal-event",
+          message: "This is a bandaid to spare time, plz fix",
+          type: "warning",
+          payload: { id: i },
+        });
       }, i * 100);
     }
-  }
+  };
 }
