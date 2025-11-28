@@ -1,80 +1,45 @@
-.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
-  grid-auto-columns: 1fr;
-  gap: 1em 1em;
+.container {  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 1rem;
   grid-auto-flow: row;
   grid-template-areas:
-    "A01 A02 A03 A04 A05 A06"
-    "A07 A08 A09 A10 Terminal A11"
-    "A12 A13 A14 A15 A16 .";
+    "OO1 OO3 OO5 OO7 O1O"
+    "OO1 OO3 OO5 OO7 O1O"
+    "OO1 OO3 OO5 OO7 O1O"
+    "OO1 OO3 OO5 OO7 O1O"
+    "OO1 OO3 OO5 OO8 O11"
+    "OO1 OO3 Terminal OO8 O11"
+    "OO2 OO4 Terminal OO8 O11"
+    "OO2 OO4 OO6 OO8 O11"
+    "OO2 OO4 OO6 OO9 O12"
+    "OO2 OO4 OO6 OO9 O12"
+    "OO2 OO4 OO6 OO9 O12"
+    "OO2 OO4 OO6 OO9 O12";
 }
 
-.Terminal {
-  grid-area: Terminal;
-}
+.OO2 { grid-area: OO2; }
 
-.A01 {
-  grid-area: A01;
-}
+.OO1 { grid-area: OO1; }
 
-.A02 {
-  grid-area: A02;
-}
+.OO3 { grid-area: OO3; }
 
-.A03 {
-  grid-area: A03;
-}
+.OO4 { grid-area: OO4; }
 
-.A04 {
-  grid-area: A04;
-}
+.OO7 { grid-area: OO7; }
 
-.A05 {
-  grid-area: A05;
-}
+.OO8 { grid-area: OO8; }
 
-.A06 {
-  grid-area: A06;
-}
+.OO9 { grid-area: OO9; }
 
-.A07 {
-  grid-area: A07;
-}
+.O1O { grid-area: O1O; }
 
-.A08 {
-  grid-area: A08;
-}
+.O11 { grid-area: O11; }
 
-.A09 {
-  grid-area: A09;
-}
+.O12 { grid-area: O12; }
 
-.A10 {
-  grid-area: A10;
-}
+.Terminal { grid-area: Terminal; }
 
-.A11 {
-  grid-area: A11;
-}
+.OO5 { grid-area: OO5; }
 
-.A12 {
-  grid-area: A12;
-}
-
-.A13 {
-  grid-area: A13;
-}
-
-.A14 {
-  grid-area: A14;
-}
-
-.A15 {
-  grid-area: A15;
-}
-
-.A16 {
-  grid-area: A16;
-}
+.OO6 { grid-area: OO6; }

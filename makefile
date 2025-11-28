@@ -10,5 +10,5 @@ enter:
 	docker exec -it $(target) sh
 
 dev: 
-	docker compose --env-file .env.dev -f compose.dev.yaml up --build -d
+	docker compose --env-file .env.dev -f compose.dev.yaml up -d
 

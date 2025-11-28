@@ -117,7 +117,7 @@ export class JsonLocker {
     for (let i = 0; i < this.state.length; i++) {
       setTimeout(() => {
         this.openLock(this.state[i].port);
-      }, i * 100);
+      }, i * 1000);
     }
   }
 }
