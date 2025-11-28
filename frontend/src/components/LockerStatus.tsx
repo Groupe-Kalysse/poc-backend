@@ -1,27 +1,59 @@
 import { useEffect, useState } from "react";
 import "./LockerStatus.css";
 import "./LockerStatus_Layout.css";
+import { useSocket } from "../hooks/useSocket";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
 
-type Lockers = {
+type Locker = {
   id: number;
   lockerNumber: string;
-  status: string;
-}[];
+  status: "open" | "closed" | "claimed";
+};
+type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
+  const { socket } = useSocket();
+  const [focusedLocker, setFocus] = useState<Locker | null>(null);
 
-  async function updateLocker(num: number) {
-    await fetch(`/api/lockers/${num}`, {
+  async function claimLocker(num: number) {
+    console.log("claim ", focusedLocker?.id);
+    await fetch(`/api/lockers/${num}/claim`, {
       method: "PUT",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        const newState = lockers.map((candidate) => {
-          if (candidate.id !== res.id) return candidate;
-          return res;
-        });
-        setLockers(newState);
-      });
+    });
+  }
+  async function freeLocker() {
+    console.log("free ", focusedLocker?.id);
+    if (!focusedLocker) return;
+    await fetch(`/api/lockers/${focusedLocker.id}/free`, {
+      method: "PUT",
+    });
+    setFocus(null);
+  }
+  async function openLocker() {
+    console.log("open ", focusedLocker?.id);
+    if (!focusedLocker) return;
+    await fetch(`/api/lockers/${focusedLocker.id}/open`, {
+      method: "PUT",
+    });
+    setFocus(null);
+  }
+  async function closeLocker() {
+    console.log("close ", focusedLocker?.id);
+    if (!focusedLocker) return;
+    await fetch(`/api/lockers/${focusedLocker.id}/close`, {
+      method: "PUT",
+    });
+    setFocus(null);
   }
 
   useEffect(() => {
@@ -34,25 +66,75 @@ function LockerStatus() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const hFeedback = (data: { locks: Lockers }) => {
+      setLockers(data.locks);
+    };
+
+    socket.on("claim", hFeedback);
+    socket.on("free", hFeedback);
+    socket.on("open", hFeedback);
+    socket.on("close", hFeedback);
+
+    return () => {
+      socket.off("claim", hFeedback);
+      socket.off("free", hFeedback);
+      socket.off("open", hFeedback);
+      socket.off("close", hFeedback);
+    };
+  }, [socket]);
+
   if (!lockers) return <p>Status loading...</p>;
 
   return (
-    <ul className="container">
-      {lockers.map((locker) => {
-        return (
-          <li
-            key={locker.id}
-            className={`${locker.status} ${locker.lockerNumber}`}
-            onClick={() => {
-              updateLocker(locker.id);
-            }}
-          >
-            {locker.lockerNumber}
-          </li>
-        );
-      })}
-      <li className="Terminal" />
-    </ul>
+    <Dialog>
+      <ul className="container">
+        {lockers.map((locker) => {
+          return (
+            <DialogTrigger
+              asChild
+              onClick={() => {
+                setFocus(locker);
+                claimLocker(locker.id);
+              }}
+            >
+              <li
+                key={locker.id}
+                className={`${locker.status} ${locker.lockerNumber}`}
+              >
+                {locker.lockerNumber}
+              </li>
+            </DialogTrigger>
+          );
+        })}
+        <li className="Terminal" />
+      </ul>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Reserver/Ouvrir un casier</DialogTitle>
+          <DialogDescription>lorem100</DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="sm:justify-start">
+          <DialogClose asChild>
+            <Button type="button" onClick={freeLocker}>
+              Nope
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button type="submit" variant="default" onClick={closeLocker}>
+              Close
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button type="submit" variant="default" onClick={openLocker}>
+              Open
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

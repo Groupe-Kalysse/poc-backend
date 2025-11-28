@@ -39,11 +39,21 @@ function Home() {
             <span className="red">Occupé</span>
           </p>
         </section>
-        <h2>✅ Borne en attente d'instructions</h2>
-        <ul>
-          <li>Fermer une porte puis badger pour réserver un casier</li>
-          <li>Badger pour ouvrir un casier préalablement réservé</li>
-        </ul>
+        {/* <section>
+          <h2>✅ Borne en attente d'instructions</h2>
+          <ul>
+            <li>Fermer une porte puis badger pour réserver un casier</li>
+            <li>Badger pour ouvrir un casier préalablement réservé</li>
+          </ul>
+        </section> */}
+        {/* <aside className="text-gray-500 opacity-70">
+          <details>
+            <summary>
+              <h2>🐛 Debug</h2>
+            </summary>
+            Le reste
+          </details>
+        </aside> */}
       </>
     );
   else

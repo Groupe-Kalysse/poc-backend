@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import CommBus from "../CommBus";
+import CommBus, { Command } from "../CommBus";
 
 class SocketServer {
   public io: Server;
@@ -8,6 +8,10 @@ class SocketServer {
   constructor(httpServer: any, commandBus: CommBus) {
     this.commandBus = commandBus;
     this.initialize(httpServer);
+    this.commandBus.listenEvent("locker-claim", this.onClaim);
+    this.commandBus.listenEvent("locker-free", this.onFree);
+    this.commandBus.listenEvent("locker-close", this.onLock);
+    this.commandBus.listenEvent("locker-open", this.onUnlock);
   }
   initialize(httpServer: any) {
     this.io = new Server(httpServer, {
@@ -34,6 +38,19 @@ class SocketServer {
       );
     });
   }
+
+  onClaim = (command: Command) => {
+    this.io.emit("claim", command.payload);
+  };
+  onFree = (command: Command) => {
+    this.io.emit("free", command.payload);
+  };
+  onLock = (command: Command) => {
+    this.io.emit("lock", command.payload);
+  };
+  onUnlock = (command: Command) => {
+    this.io.emit("unlock", command.payload);
+  };
 }
 
 export default SocketServer;
