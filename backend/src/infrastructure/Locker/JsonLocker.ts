@@ -23,7 +23,7 @@ export class JsonLocker {
 
     const newLockers = Locker.create(
       lockers.map((locker) => ({
-        lockerNumber: locker.lockerNumber,
+        lockerNumber: locker.label,
         status: "open",
       }))
     );
