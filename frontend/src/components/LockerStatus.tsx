@@ -1,58 +1,165 @@
 import { useEffect, useState } from "react";
 import "./LockerStatus.css";
 import "./LockerStatus_Layout.css";
+import { useSocket } from "../hooks/useSocket";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
 
-type Lockers = {
+type Locker = {
   id: number;
   lockerNumber: string;
-  status: string;
-}[];
+  status: "open" | "closed" | "claimed";
+};
+type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
+  const { socket, isConnected } = useSocket();
+  const [focusedLocker, setFocus] = useState<Locker | null>(null);
 
-  async function updateLocker(num: number) {
-    await fetch(`/api/lockers/${num}`, {
+  async function claimLocker(locker: Locker) {
+    console.log("claim ", focusedLocker?.id);
+    // await fetch(`/api/lockers/${num}/claim`, {
+    //   method: "PUT",
+    // });
+    setFocus(locker);
+  }
+  async function freeLocker() {
+    console.log("free ", focusedLocker?.id);
+    if (!focusedLocker) return;
+    // await fetch(`/api/lockers/${focusedLocker.id}/free`, {
+    //   method: "PUT",
+    // });
+    setFocus(null);
+  }
+  async function openLocker() {
+    console.log("open ", focusedLocker?.id);
+    if (!focusedLocker) return;
+    await fetch(`/api/lockers/${focusedLocker.id}/open`, {
       method: "PUT",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        const newState = lockers.map((candidate) => {
-          if (candidate.id !== res.id) return candidate;
-          return res;
-        });
-        setLockers(newState);
-      });
+    });
+    setFocus(null);
+  }
+  async function closeLocker() {
+    console.log("close ", focusedLocker?.id);
+    if (!focusedLocker) return;
+    await fetch(`/api/lockers/${focusedLocker.id}/close`, {
+      method: "PUT",
+    });
+    setFocus(null);
   }
 
   useEffect(() => {
-    fetch("/api/lockers", {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setLockers(res);
-      });
-  }, []);
+    if (!socket) return;
+
+    const hFeedback = (data: { locks: Lockers }) => {
+      console.log(data);
+
+      setLockers(data.locks);
+    };
+
+    socket.on("welcome", hFeedback);
+    socket.on("claim", hFeedback);
+    socket.on("free", hFeedback);
+    socket.on("open", hFeedback);
+    socket.on("close", hFeedback);
+
+    return () => {
+      socket.off("claim", hFeedback);
+      socket.off("free", hFeedback);
+      socket.off("open", hFeedback);
+      socket.off("close", hFeedback);
+    };
+  }, [socket]);
 
   if (!lockers) return <p>Status loading...</p>;
 
+  if (!isConnected)
+    return (
+      <>
+        <h2>❌ Contact rompu avec les casiers</h2>
+        <ul>
+          <li>Merci de prendre contact avec un responsable</li>
+          <li>Pour tout renseignement complémentaire, contacter Kalysse</li>
+        </ul>
+      </>
+    );
+
   return (
-    <ul className="container">
-      {lockers.map((locker) => {
-        return (
-          <li
-            key={locker.id}
-            className={`${locker.status} ${locker.lockerNumber}`}
-            onClick={() => {
-              updateLocker(locker.id);
-            }}
-          >
-            {locker.lockerNumber}
-          </li>
-        );
-      })}
-      <li className="Terminal" />
-    </ul>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) freeLocker();
+      }}
+    >
+      <ul className="container">
+        {lockers.map((locker) => {
+          return (
+            <DialogTrigger
+              key={locker.id}
+              asChild
+              onClick={async () => {
+                await setFocus(locker);
+                claimLocker(locker);
+              }}
+            >
+              <li
+                className={`${locker.status} ${
+                  focusedLocker?.id === locker.id && "claimed"
+                } ${locker.lockerNumber}`}
+              >
+                {locker.lockerNumber}
+              </li>
+            </DialogTrigger>
+          );
+        })}
+        <li className="Terminal" />
+      </ul>
+      <p>
+        <span className="blue">Libre</span> -{" "}
+        <span className="orange">En réservation</span> -{" "}
+        <span className="red">Occupé</span>
+      </p>
+      <section>
+        <h2>✅ Borne en attente d'instructions</h2>
+        <ul>
+          <li>Fermer une porte puis badger pour réserver un casier</li>
+          <li>Badger pour ouvrir un casier préalablement réservé</li>
+        </ul>
+      </section>
+
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {focusedLocker?.status === "closed" ? "Ouvrir" : "Verrouiller"} le
+            casier {focusedLocker?.lockerNumber}
+          </DialogTitle>
+          <DialogDescription>lorem100</DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="sm:justify-start">
+          {focusedLocker?.status === "closed" ? (
+            <DialogClose asChild>
+              <Button type="submit" variant="default" onClick={openLocker}>
+                Ouvrir
+              </Button>
+            </DialogClose>
+          ) : (
+            <DialogClose asChild>
+              <Button type="submit" variant="default" onClick={closeLocker}>
+                Verrouiller
+              </Button>
+            </DialogClose>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

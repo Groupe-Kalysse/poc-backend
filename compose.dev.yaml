@@ -26,12 +26,15 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
-    # devices:
-    #   - /dev/hidraw1:/dev/hidraw1
-    #   - /dev/bus/usb:/dev/bus/usb
-    #   - /dev/ttyUSB0:/dev/ttyUSB0
+    devices:
+      - /dev/hidraw1:/dev/hidraw1
+      - /dev/bus/usb:/dev/bus/usb
+      - /dev/ttyUSB0:/dev/ttyUSB0
     ports:
       - "3001:3001"
+    depends_on:
+      database:
+        condition: service_healthy
     healthcheck:
       test:
         [
