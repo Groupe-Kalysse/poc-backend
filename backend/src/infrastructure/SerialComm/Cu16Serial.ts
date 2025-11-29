@@ -31,8 +31,15 @@ export class Cu16Serial {
     this.commandBus.listenEvent("locker-open", this.unlock);
     this.commandBus.listenEvent("locker-close", this.unlock);
     this.commandBus.listenEvent("locker-status", this.status);
+
+    this.commandBus.listenEvent("locker-ask-close", this.unlock);
   }
   unlock = (command: Command) => {
+    const locker = command.payload?.locker;
+    const idType = command.payload?.idType;
+    const code = command.payload?.code;
+    const action = command.payload?.action;
+
     const num = command.payload?.port as number;
     const commandToSerial = this.buildCommand("open", num);
     this.send(commandToSerial);
@@ -40,6 +47,12 @@ export class Cu16Serial {
       label: "serial-open",
       type: "info",
       message: `🪛 Opened lock#${num} via cu16Serial `,
+      payload: {
+        locker,
+        idType,
+        code,
+        action,
+      },
     });
   };
   status = (_command: Command) => {

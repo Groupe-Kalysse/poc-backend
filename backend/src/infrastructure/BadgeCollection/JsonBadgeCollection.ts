@@ -6,7 +6,7 @@ export class JsonBadgeCollection {
 
   constructor(commandBus: CommBus) {
     this.commandBus = commandBus;
-    this.commandBus.listenEvent("nfc-hit", this.findBadgeFromNfc);
+    //this.commandBus.listenEvent("nfc-hit", this.findBadgeFromNfc);
   }
   findBadgeFromNfc = (command: Command) => {
     const nfcTrace = command.payload?.trace as string;

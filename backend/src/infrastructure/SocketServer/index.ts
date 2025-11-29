@@ -11,8 +11,10 @@ class SocketServer {
     this.initialize(httpServer);
     this.commandBus.listenEvent("locker-claim", this.onClaim);
     this.commandBus.listenEvent("locker-free", this.onFree);
-    this.commandBus.listenEvent("locker-close", this.onLock);
+    //this.commandBus.listenEvent("locker-close", this.onLock);
     this.commandBus.listenEvent("locker-open", this.onUnlock);
+
+    this.commandBus.listenEvent("nfc-hit", this.onBadge);
   }
   initialize(httpServer: any) {
     this.io = new Server(httpServer, {
@@ -31,6 +33,20 @@ class SocketServer {
         label: "socket-login",
         type: "info",
         message: `🟢 Client connecté :${socket.id}`,
+      });
+
+      socket.on("ask-close", (data) =>
+        this.commandBus.fireEvent({
+          label: "socket-ask-close",
+          type: "info",
+          message: `🔒:Frontend asked to close a locker`,
+          payload: data,
+        })
+      );
+
+      socket.on("ask-close", async () => {
+        const locks = await Locker.find();
+        socket.emit("open", { locks });
       });
 
       socket.on("disconnect", () =>
@@ -54,6 +70,9 @@ class SocketServer {
   };
   onUnlock = (command: Command) => {
     this.io.emit("open", command.payload);
+  };
+  onBadge = (command: Command) => {
+    this.io.emit("badge", command.payload);
   };
 }
 

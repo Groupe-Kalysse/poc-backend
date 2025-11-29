@@ -56,6 +56,23 @@ function LockerStatus() {
     });
     setFocus(null);
   }
+  async function hBadge(data: string) {
+    if (!socket) return;
+    if (!focusedLocker) return; // TODO: doit on essayer d'unlock selon le badge seul ? Je trouve ça risqué
+
+    if (focusedLocker.status === "open")
+      socket.emit("ask-close", {
+        locker: focusedLocker.id,
+        idType: "badge",
+        code: data,
+      });
+    // else
+    //   socket.emit("ask-open", {
+    //     locker: focusedLocker.id,
+    //     idType: "badge",
+    //     code: data,
+    //   });
+  }
 
   useEffect(() => {
     if (!socket) return;
@@ -67,16 +84,20 @@ function LockerStatus() {
     };
 
     socket.on("welcome", hFeedback);
-    socket.on("claim", hFeedback);
-    socket.on("free", hFeedback);
-    socket.on("open", hFeedback);
+    // socket.on("claim", hFeedback);
+    // socket.on("free", hFeedback);
+    // socket.on("open", hFeedback);
     socket.on("close", hFeedback);
 
+    socket.on("badge", hBadge);
+    socket.on("open", hFeedback);
+
     return () => {
-      socket.off("claim", hFeedback);
-      socket.off("free", hFeedback);
+      // socket.off("claim", hFeedback);
+      // socket.off("free", hFeedback);
       socket.off("open", hFeedback);
       socket.off("close", hFeedback);
+      socket.on("badge", hFeedback);
     };
   }, [socket]);
 

@@ -36,6 +36,8 @@ export class JsonLocker {
     this.commandBus.listenEvent("web-asked-free", this.freeLock);
     this.commandBus.listenEvent("web-asked-open", this.openLock);
     this.commandBus.listenEvent("web-asked-close", this.closeLock);
+
+    this.commandBus.listenEvent("socket-ask-close", this.closeLock);
   }
 
   onBadge(): void | Promise<void> {}
@@ -99,18 +101,25 @@ export class JsonLocker {
   };
 
   closeLock = (command: Command) => {
-    const lock = this.state.find((lock) => lock.id === command.payload?.id);
+    const locker = command.payload?.locker;
+    const idType = command.payload?.idType;
+    const code = command.payload?.code;
+
+    const lock = this.state.find((candidate) => candidate.id === locker);
     if (!lock) return;
 
     this.commandBus.fireEvent({
-      label: "locker-close",
+      label: "locker-ask-close", //"locker-close",
       type: "info",
-      message: `🔒Ask locking lock ${lock.lockerNumber}`,
+      message: `🔒 Ask locking lock ${lock.lockerNumber}`,
       payload: {
-        port: lock.id,
-        locks: this.state,
+        locker,
+        idType,
+        code,
+        action: "close",
       },
     });
+
     this.state = this.state.map((candidate) => {
       if (candidate.id !== lock.id) return candidate;
       return { ...candidate, status: "closed" };
