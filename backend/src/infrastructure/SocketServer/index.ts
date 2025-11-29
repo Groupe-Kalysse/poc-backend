@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import CommBus, { Command } from "../CommBus";
+import { Locker } from "../Database/entities/Locker";
 
 class SocketServer {
   public io: Server;
@@ -22,7 +23,10 @@ class SocketServer {
       path: "/socket.io/",
       transports: ["websocket"],
     });
-    this.io.on("connection", (socket) => {
+    this.io.on("connection", async (socket) => {
+      const locks = await Locker.find();
+
+      socket.emit("welcome", { locks });
       this.commandBus.fireEvent({
         label: "socket-login",
         type: "info",

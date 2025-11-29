@@ -149,8 +149,6 @@ export class JsonLocker {
     });
   };
   openAllLocks = () => {
-    console.log(this.state);
-
     for (let i = 1; i <= this.state.length; i++) {
       setTimeout(() => {
         this.openLock({
