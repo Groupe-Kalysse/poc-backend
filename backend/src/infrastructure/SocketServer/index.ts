@@ -50,10 +50,10 @@ class SocketServer {
     this.io.emit("free", command.payload);
   };
   onLock = (command: Command) => {
-    this.io.emit("lock", command.payload);
+    this.io.emit("close", command.payload);
   };
   onUnlock = (command: Command) => {
-    this.io.emit("unlock", command.payload);
+    this.io.emit("open", command.payload);
   };
 }
 
