@@ -28,44 +28,13 @@ function Home() {
     };
   }, [socket]);
 
-  if (isConnected)
-    return (
-      <>
-        <section>
-          <LockerStatus />
-          <p>
-            <span className="blue">Libre</span> -{" "}
-            <span className="orange">En réservation</span> -{" "}
-            <span className="red">Occupé</span>
-          </p>
-        </section>
-        {/* <section>
-          <h2>✅ Borne en attente d'instructions</h2>
-          <ul>
-            <li>Fermer une porte puis badger pour réserver un casier</li>
-            <li>Badger pour ouvrir un casier préalablement réservé</li>
-          </ul>
-        </section> */}
-        {/* <aside className="text-gray-500 opacity-70">
-          <details>
-            <summary>
-              <h2>🐛 Debug</h2>
-            </summary>
-            Le reste
-          </details>
-        </aside> */}
-      </>
-    );
-  else
-    return (
-      <>
-        <h2>❌ Contact rompu avec les casiers</h2>
-        <ul>
-          <li>Merci de prendre contact avec un responsable</li>
-          <li>Pour tout renseignement complémentaire, contacter Kalysse</li>
-        </ul>
-      </>
-    );
+  return (
+    <>
+      <section>
+        <LockerStatus />
+      </section>
+    </>
+  );
 }
 
 export default Home;

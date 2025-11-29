@@ -1,4 +1,5 @@
-.container {  display: grid;
+.container {
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 1rem;
@@ -18,28 +19,54 @@
     "OO2 OO4 OO6 OO9 O12";
 }
 
-.OO2 { grid-area: OO2; }
+.OO2 {
+  grid-area: OO2;
+}
 
-.OO1 { grid-area: OO1; }
+.OO1 {
+  grid-area: OO1;
+}
 
-.OO3 { grid-area: OO3; }
+.OO3 {
+  grid-area: OO3;
+}
 
-.OO4 { grid-area: OO4; }
+.OO4 {
+  grid-area: OO4;
+}
 
-.OO7 { grid-area: OO7; }
+.OO7 {
+  grid-area: OO7;
+}
 
-.OO8 { grid-area: OO8; }
+.OO8 {
+  grid-area: OO8;
+}
 
-.OO9 { grid-area: OO9; }
+.OO9 {
+  grid-area: OO9;
+}
 
-.O1O { grid-area: O1O; }
+.O1O {
+  grid-area: O1O;
+}
 
-.O11 { grid-area: O11; }
+.O11 {
+  grid-area: O11;
+}
 
-.O12 { grid-area: O12; }
+.O12 {
+  grid-area: O12;
+}
 
-.Terminal { grid-area: Terminal; }
+.Terminal {
+  grid-area: Terminal;
+}
 
-.OO5 { grid-area: OO5; }
+.OO5 {
+  grid-area: OO5;
+}
 
-.OO6 { grid-area: OO6; }
+.OO6 {
+  grid-area: OO6;
+}

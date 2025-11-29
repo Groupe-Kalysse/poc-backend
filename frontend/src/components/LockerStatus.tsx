@@ -22,7 +22,7 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
-  const { socket } = useSocket();
+  const { socket, isConnected } = useSocket();
   const [focusedLocker, setFocus] = useState<Locker | null>(null);
 
   async function claimLocker(num: number) {
@@ -88,6 +88,17 @@ function LockerStatus() {
 
   if (!lockers) return <p>Status loading...</p>;
 
+  if (!isConnected)
+    return (
+      <>
+        <h2>❌ Contact rompu avec les casiers</h2>
+        <ul>
+          <li>Merci de prendre contact avec un responsable</li>
+          <li>Pour tout renseignement complémentaire, contacter Kalysse</li>
+        </ul>
+      </>
+    );
+
   return (
     <Dialog>
       <ul className="container">
@@ -111,6 +122,19 @@ function LockerStatus() {
         })}
         <li className="Terminal" />
       </ul>
+      <p>
+        <span className="blue">Libre</span> -{" "}
+        <span className="orange">En réservation</span> -{" "}
+        <span className="red">Occupé</span>
+      </p>
+      {/* <section>
+          <h2>✅ Borne en attente d'instructions</h2>
+          <ul>
+            <li>Fermer une porte puis badger pour réserver un casier</li>
+            <li>Badger pour ouvrir un casier préalablement réservé</li>
+          </ul>
+        </section> */}
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Reserver/Ouvrir un casier</DialogTitle>
