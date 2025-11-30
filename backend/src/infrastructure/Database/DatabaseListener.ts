@@ -14,11 +14,12 @@ export default class DatabaseListener {
   }
 
   async onLockOpen(command: Command) {
-    // TODO Log closing to DB
     const locker = command.payload?.locker as number;
     const idType = command.payload?.idType as string;
     const code = command.payload?.code as string;
     const action = command.payload?.action as string;
+
+    console.log('event target (dbListener): ', command)
 
     const lock = await Locker.findOneByOrFail({ id: locker });
     if (action === "close") {
