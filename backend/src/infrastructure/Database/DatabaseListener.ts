@@ -13,13 +13,13 @@ export default class DatabaseListener {
     // TODO Log error to DB
   }
 
-  async onLockOpen(command: Command) {
+  onLockOpen = async (command: Command) => {
     const locker = command.payload?.locker as number;
     const idType = command.payload?.idType as string;
     const code = command.payload?.code as string;
     const action = command.payload?.action as string;
 
-    console.log('event target (dbListener): ', command)
+    console.log("event target (dbListener): ", command);
 
     const lock = await Locker.findOneByOrFail({ id: locker });
     if (action === "close") {
@@ -50,5 +50,5 @@ export default class DatabaseListener {
         message: `🏬 Stored the update for locker #${locker}`,
       });
     }
-  }
+  };
 }
