@@ -105,18 +105,15 @@ function LockerStatus() {
       <ul className="container">
         {lockers.map((locker) => {
           return (
-            <DialogTrigger
-              key={locker.id}
-              asChild
-              onClick={async () => {
-                console.log("ask to claim locker", locker);
-                setFocusedLocker(locker);
-              }}
-            >
+            <DialogTrigger key={locker.id} asChild>
               <li
                 className={`${locker.status} ${
                   focusedLocker?.id === locker.id && "claimed"
                 } ${locker.lockerNumber}`}
+                onClick={async () => {
+                  console.log("ask to claim locker", locker);
+                  setFocusedLocker(locker);
+                }}
               >
                 {locker.lockerNumber}
               </li>
