@@ -106,7 +106,7 @@ function LockerStatus() {
         {lockers.map((locker) => {
           return (
             <DialogTrigger key={locker.id} asChild>
-              <li
+              <Button
                 className={`${locker.status} ${
                   focusedLocker?.id === locker.id && "claimed"
                 } ${locker.lockerNumber}`}
@@ -116,7 +116,7 @@ function LockerStatus() {
                 }}
               >
                 {locker.lockerNumber}
-              </li>
+              </Button>
             </DialogTrigger>
           );
         })}
