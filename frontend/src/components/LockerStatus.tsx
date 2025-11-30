@@ -82,10 +82,10 @@ function LockerStatus() {
     // socket.on("claim", hFeedback);
     // socket.on("free", hFeedback);
     // socket.on("open", hFeedback);
-    socket.on("close", hFeedback);
+    socket.on("open", hFeedback);
 
     socket.on("badge", hBadge);
-    socket.on("open", hFeedback);
+    socket.on("close", hFeedback);
 
     return () => {
       // socket.off("claim", hFeedback);
