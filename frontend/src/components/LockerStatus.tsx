@@ -128,6 +128,8 @@ function LockerStatus() {
               key={locker.id}
               asChild
               onClick={async () => {
+                console.log("ask to claim locker", locker);
+
                 await setFocus(locker);
                 claimLocker(locker);
               }}
