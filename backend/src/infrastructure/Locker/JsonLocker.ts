@@ -106,7 +106,7 @@ export class JsonLocker {
     const idType = command.payload?.idType;
     const code = command.payload?.code;
 
-    const lock = this.state.find((candidate) => candidate.id === locker);
+    const lock = this.state.find((candidate) => candidate.id === locker); //TODO Fix this, unreadable
     if (!lock) return;
 
     this.commandBus.fireEvent({
@@ -141,14 +141,15 @@ export class JsonLocker {
   }
 
   openLock = (command: Command) => {
-    const lock = this.state.find((lock) => lock.id === command.payload?.id);
-    if (!lock) return;
-
     const locker = command.payload?.locker;
     const idType = command.payload?.idType;
     const code = command.payload?.code;
 
-    console.log({ locker, idType, code, lock });
+    const lock = this.state.find((lock) => lock.id === locker); //TODO Fix this, unreadable
+    if (!lock) return;
+    if (idType === "badge" && code !== lock.unlockBadge) return;
+
+    console.log("Ready to unlock ", locker);
 
     this.commandBus.fireEvent({
       label: "locker-open",
