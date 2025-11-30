@@ -102,8 +102,8 @@ function LockerStatus() {
 
   return (
     <Dialog
-      onOpenChange={(isOpen) => {
-        if (!isOpen) setFocus(null);
+      onOpenChange={(open) => {
+        if (!open) setFocus(null);
       }}
     >
       <ul className="container">
