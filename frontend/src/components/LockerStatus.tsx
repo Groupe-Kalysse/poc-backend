@@ -25,21 +25,6 @@ function LockerStatus() {
   const { socket, isConnected } = useSocket();
   const [focusedLocker, setFocus] = useState<Locker | null>(null);
 
-  async function claimLocker(locker: Locker) {
-    console.log("claim ", locker.id);
-    // await fetch(`/api/lockers/${num}/claim`, {
-    //   method: "PUT",
-    // });
-    setFocus(locker);
-  }
-  async function freeLocker() {
-    console.log("free ", focusedLocker?.id);
-    if (!focusedLocker) return;
-    // await fetch(`/api/lockers/${focusedLocker.id}/free`, {
-    //   method: "PUT",
-    // });
-    setFocus(null);
-  }
   async function openLocker() {
     console.log("open ", focusedLocker?.id);
     if (!focusedLocker) return;
@@ -116,11 +101,7 @@ function LockerStatus() {
     );
 
   return (
-    <Dialog
-      onOpenChange={(open) => {
-        if (!open) freeLocker();
-      }}
-    >
+    <Dialog onOpenChange={() => setFocus(null)}>
       <ul className="container">
         {lockers.map((locker) => {
           return (
