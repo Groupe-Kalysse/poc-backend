@@ -12,10 +12,10 @@ class SocketServer {
     this.commandBus.listenEvent("locker-claim", this.onClaim);
     this.commandBus.listenEvent("locker-free", this.onFree);
     //this.commandBus.listenEvent("locker-close", this.onLock);
-    this.commandBus.listenEvent("locker-open", this.onUnlock);
+    // this.commandBus.listenEvent("locker-open", this.onUnlock);
 
     this.commandBus.listenEvent("nfc-hit", this.onBadge);
-    this.commandBus.listenEvent("db-ok-close", this.onBadge);
+    this.commandBus.listenEvent("db-ok-close", this.onLock);
   }
   initialize(httpServer: any) {
     this.io = new Server(httpServer, {
