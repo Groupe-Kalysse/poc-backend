@@ -22,7 +22,7 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
-  const [focusedLocker, setFocus] = useState<Locker | null>(null);
+  const [focusedLocker, setFocusedLocker] = useState<Locker | null>(null);
   const { socket, isConnected } = useSocket();
 
   async function openLocker() {
@@ -31,7 +31,7 @@ function LockerStatus() {
     await fetch(`/api/lockers/${focusedLocker.id}/open`, {
       method: "PUT",
     });
-    setFocus(null);
+    setFocusedLocker(null);
   }
   async function closeLocker() {
     console.log("close ", focusedLocker?.id);
@@ -39,7 +39,7 @@ function LockerStatus() {
     await fetch(`/api/lockers/${focusedLocker.id}/close`, {
       method: "PUT",
     });
-    setFocus(null);
+    setFocusedLocker(null);
   }
   const hFeedback = (data: { locks: Lockers }) => {
     setLockers(data.locks);
@@ -101,7 +101,7 @@ function LockerStatus() {
     );
 
   return (
-    <Dialog onOpenChange={() => setFocus(null)}>
+    <Dialog onOpenChange={() => setFocusedLocker(null)}>
       <ul className="container">
         {lockers.map((locker) => {
           return (
@@ -110,7 +110,7 @@ function LockerStatus() {
               asChild
               onClick={async () => {
                 console.log("ask to claim locker", locker);
-                setFocus({ ...locker });
+                setFocusedLocker(locker);
               }}
             >
               <li
