@@ -50,25 +50,21 @@ function LockerStatus() {
 
   const hBadge = async (data: { trace: string }) => {
     if (!socket) return;
-    console.log("socket ok");
-
-    if (!focusedLockerRef.current) return;
-    console.log("focusedLockerRef ok");
-
+    if (!focusedLockerRef.current) return; //TODO si pas de casier focus, check badges admin ?
     if (focusedLockerRef.current.status === "open") {
-      console.log("ready to send");
       socket.emit("ask-close", {
         locker: focusedLockerRef.current.id,
         idType: "badge",
         code: data.trace,
       });
     }
-    // else
-    //   socket.emit("ask-open", {
-    //     locker: focusedLocker.id,
-    //     idType: "badge",
-    //     code: data,
-    //   });
+    if (focusedLockerRef.current.status === "closed") {
+      socket.emit("ask-open", {
+        locker: focusedLockerRef.current.id,
+        idType: "badge",
+        code: data.trace,
+      });
+    }
   };
 
   useEffect(() => {

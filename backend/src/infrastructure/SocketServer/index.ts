@@ -44,10 +44,14 @@ class SocketServer {
         })
       );
 
-      // socket.on("db-ok-close", async () => {
-      //   const locks = await Locker.find();
-      //   socket.emit("close", { locks });
-      // });
+      socket.on("ask-open", (data) =>
+        this.commandBus.fireEvent({
+          label: "socket-ask-open",
+          type: "info",
+          message: `🔒:Frontend asked to open a locker`,
+          payload: data,
+        })
+      );
 
       socket.on("disconnect", () =>
         this.commandBus.fireEvent({

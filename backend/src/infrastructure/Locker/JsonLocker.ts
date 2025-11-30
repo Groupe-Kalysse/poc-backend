@@ -7,8 +7,8 @@ type LockerType = {
   id: number;
   lockerNumber: string;
   status: string;
-  //   unlockBadge: null,
-  //   unlockCode: null,
+  unlockBadge?: string;
+  unlockCode?: string;
 };
 export class JsonLocker {
   private commandBus: CommBus;
@@ -38,6 +38,7 @@ export class JsonLocker {
     this.commandBus.listenEvent("web-asked-close", this.closeLock);
 
     this.commandBus.listenEvent("socket-ask-close", this.closeLock);
+    this.commandBus.listenEvent("socket-ask-open", this.openLock);
   }
 
   onBadge(): void | Promise<void> {}
@@ -142,6 +143,12 @@ export class JsonLocker {
   openLock = (command: Command) => {
     const lock = this.state.find((lock) => lock.id === command.payload?.id);
     if (!lock) return;
+
+    const locker = command.payload?.locker;
+    const idType = command.payload?.idType;
+    const code = command.payload?.code;
+
+    console.log({ locker, idType, code, lock });
 
     this.commandBus.fireEvent({
       label: "locker-open",
