@@ -22,7 +22,7 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
-  const [focusedLocker, setFocusedLocker] = useState<Locker | null>(null);
+  const [focusedLocker, setFocus] = useState<Locker | null>(null);
   const { socket, isConnected } = useSocket();
 
   async function openLocker() {
@@ -31,7 +31,7 @@ function LockerStatus() {
     await fetch(`/api/lockers/${focusedLocker.id}/open`, {
       method: "PUT",
     });
-    setFocusedLocker(null);
+    setFocus(null);
   }
   async function closeLocker() {
     console.log("close ", focusedLocker?.id);
@@ -39,7 +39,7 @@ function LockerStatus() {
     await fetch(`/api/lockers/${focusedLocker.id}/close`, {
       method: "PUT",
     });
-    setFocusedLocker(null);
+    setFocus(null);
   }
   const hFeedback = (data: { locks: Lockers }) => {
     setLockers(data.locks);
@@ -101,22 +101,29 @@ function LockerStatus() {
     );
 
   return (
-    <Dialog onOpenChange={() => setFocusedLocker(null)}>
+    <Dialog
+      onOpenChange={(isOpen) => {
+        if (!isOpen) setFocus(null);
+      }}
+    >
       <ul className="container">
         {lockers.map((locker) => {
           return (
-            <DialogTrigger key={locker.id} asChild>
-              <Button
+            <DialogTrigger
+              key={locker.id}
+              asChild
+              onClick={async () => {
+                console.log("ask to claim locker", locker);
+                setFocus(locker);
+              }}
+            >
+              <li
                 className={`${locker.status} ${
                   focusedLocker?.id === locker.id && "claimed"
                 } ${locker.lockerNumber}`}
-                onClick={async () => {
-                  console.log("ask to claim locker", locker);
-                  setFocusedLocker(locker);
-                }}
               >
                 {locker.lockerNumber}
-              </Button>
+              </li>
             </DialogTrigger>
           );
         })}
