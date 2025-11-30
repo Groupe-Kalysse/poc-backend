@@ -22,8 +22,8 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
-  const { socket, isConnected } = useSocket();
   const [focusedLocker, setFocus] = useState<Locker | null>(null);
+  const { socket, isConnected } = useSocket();
 
   async function openLocker() {
     console.log("open ", focusedLocker?.id);
@@ -110,7 +110,7 @@ function LockerStatus() {
               asChild
               onClick={async () => {
                 console.log("ask to claim locker", locker);
-                setFocus(locker);
+                setFocus({ ...locker });
               }}
             >
               <li
