@@ -72,18 +72,12 @@ function LockerStatus() {
   useEffect(() => {
     if (!socket) return;
 
-    // socket.on("claim", hFeedback);
-    // socket.on("free", hFeedback);
-    // socket.on("open", hFeedback);
-    socket.on("open", hFeedback);
-
     socket.on("welcome", hFeedback);
     socket.on("badge", hBadge);
     socket.on("close", hFeedback);
+    socket.on("open", hFeedback);
 
     return () => {
-      // socket.off("claim", hFeedback);
-      // socket.off("free", hFeedback);
       socket.off("welcome", hFeedback);
       socket.off("open", hFeedback);
       socket.off("close", hFeedback);

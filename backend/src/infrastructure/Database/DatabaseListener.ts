@@ -19,7 +19,10 @@ export default class DatabaseListener {
     const code = command.payload?.code as string;
     const action = command.payload?.action as string;
 
+    console.log("command:", { locker, idType, code, action });
+
     const lock = await Locker.findOneByOrFail({ id: locker });
+    console.log("before:", { lock });
     if (action === "close") {
       if (lock.status === "closed")
         //TODO
@@ -59,20 +62,22 @@ export default class DatabaseListener {
       lock.status = "closed";
       switch (idType) {
         case "badge":
-          if (lock.unlockBadge !== code) return;
-          //TODO
-          // log bad open tentative
-          // fire event
-
+          if (lock.unlockBadge !== code)
+            //TODO
+            // log bad open tentative
+            // fire event
+            return;
           break;
         case "code":
-          if (lock.unlockCode !== code) return;
-          //TODO
-          // log bad open tentative
-          // fire event
+          if (lock.unlockCode !== code)
+            //TODO
+            // log bad open tentative
+            // fire event
+            return;
           break;
       }
       await lock.save();
+      console.log("after:", { lock });
       this.commandBus.fireEvent({
         label: "db-ok-open",
         type: "info",
