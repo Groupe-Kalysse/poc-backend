@@ -50,15 +50,18 @@ function LockerStatus() {
 
   const hBadge = async (data: { trace: string }) => {
     if (!socket) return;
+    console.log("socket ok");
 
     if (!focusedLockerRef.current) return;
+    console.log("focusedLockerRef ok");
 
     if (focusedLockerRef.current.status === "open")
-      socket.emit("ask-close", {
-        locker: focusedLockerRef.current.id,
-        idType: "badge",
-        code: data.trace,
-      });
+      console.log("ready to send");
+    socket.emit("ask-close", {
+      locker: focusedLockerRef.current.id,
+      idType: "badge",
+      code: data.trace,
+    });
     // else
     //   socket.emit("ask-open", {
     //     locker: focusedLocker.id,
