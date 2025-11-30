@@ -62,6 +62,8 @@ function LockerStatus() {
 
   const hBadge = async (data: { trace: string }) => {
     if (!socket) return;
+    console.log({ focusedLocker });
+
     if (!focusedLocker) return;
 
     if (focusedLocker.status === "open")
