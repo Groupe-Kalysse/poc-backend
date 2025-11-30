@@ -118,13 +118,21 @@ function LockerStatus() {
                 setFocusedLockerId(locker.id);
               }}
             >
-              <li
-                className={`${locker.status} ${
-                  focusedLocker?.id === locker.id && "claimed"
-                } ${locker.lockerNumber}`}
+              {" "}
+              <div
+                onClick={() => {
+                  console.log("CLICKED", locker);
+                  setFocusedLockerId(locker.id);
+                }}
               >
-                {locker.lockerNumber}
-              </li>
+                <li
+                  className={`${locker.status} ${
+                    focusedLocker?.id === locker.id && "claimed"
+                  } ${locker.lockerNumber}`}
+                >
+                  {locker.lockerNumber}
+                </li>
+              </div>
             </DialogTrigger>
           );
         })}
