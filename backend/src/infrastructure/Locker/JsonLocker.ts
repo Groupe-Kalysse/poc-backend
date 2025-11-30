@@ -146,8 +146,12 @@ export class JsonLocker {
       type: "info",
       message: `🔓Ask unlocking lock ${lock.lockerNumber}`,
       payload: {
-        port: lock.id,
-        locks: lockers,
+        // port: lock.id,
+        // locks: lockers,
+        locker,
+        idType,
+        code,
+        action: "open",
       },
     });
     // this.state = this.state.map((candidate) => {
