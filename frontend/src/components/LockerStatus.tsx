@@ -22,10 +22,10 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
-  const focusedLockerRef = useRef<Locker | null>(null);
-
   const [focusedLockerId, setFocusedLockerId] = useState<number | null>(null);
   const focusedLocker = lockers.find((l) => l.id === focusedLockerId) ?? null;
+  const focusedLockerRef = useRef<Locker | null>(null);
+
   const { socket, isConnected } = useSocket();
 
   async function openLocker() {
