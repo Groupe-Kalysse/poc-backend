@@ -83,7 +83,7 @@ function LockerStatus() {
       socket.off("welcome", hFeedback);
       socket.off("open", hFeedback);
       socket.off("close", hFeedback);
-      socket.on("badge", hBadge);
+      socket.off("badge", hBadge);
     };
   }, [socket]);
 
