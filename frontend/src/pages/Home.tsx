@@ -15,8 +15,6 @@ function Home() {
     };
 
     const handleClosedDoor = (data: { locker: number }) => {
-      console.log("Should receive the event");
-
       //navigate(`/door/${data.locker}`)
     };
 

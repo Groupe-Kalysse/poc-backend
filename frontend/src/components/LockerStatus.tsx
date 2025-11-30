@@ -29,7 +29,6 @@ function LockerStatus() {
   const { socket, isConnected } = useSocket();
 
   async function openLocker() {
-    console.log("open ", focusedLocker?.id);
     if (!focusedLocker) return;
     await fetch(`/api/lockers/${focusedLocker.id}/open`, {
       method: "PUT",
@@ -37,7 +36,6 @@ function LockerStatus() {
     setFocusedLockerId(null);
   }
   async function closeLocker() {
-    console.log("close ", focusedLocker?.id);
     if (!focusedLocker) return;
     await fetch(`/api/lockers/${focusedLocker.id}/close`, {
       method: "PUT",
@@ -119,7 +117,6 @@ function LockerStatus() {
               key={locker.id}
               asChild
               onClick={async () => {
-                console.log("ask to claim locker", locker);
                 setFocusedLockerId(locker.id);
               }}
             >
