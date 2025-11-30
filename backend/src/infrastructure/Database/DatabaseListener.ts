@@ -48,5 +48,36 @@ export default class DatabaseListener {
         message: `🏬 Stored the update for locker #${locker}`,
       });
     }
+
+    if (action === "open") {
+      if (lock.status === "open")
+        //TODO
+        // log bad open tentative
+        // fire event
+        return;
+
+      lock.status = "closed";
+      switch (idType) {
+        case "badge":
+          if (lock.unlockBadge !== code) return;
+          //TODO
+          // log bad open tentative
+          // fire event
+
+          break;
+        case "code":
+          if (lock.unlockCode !== code) return;
+          //TODO
+          // log bad open tentative
+          // fire event
+          break;
+      }
+      await lock.save();
+      this.commandBus.fireEvent({
+        label: "db-ok-open",
+        type: "info",
+        message: `🏬 Stored the update for locker #${locker}`,
+      });
+    }
   };
 }
