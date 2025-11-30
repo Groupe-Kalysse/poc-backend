@@ -57,6 +57,7 @@ function LockerStatus() {
     setFocus(null);
   }
   async function hBadge(data: string) {
+    console.log(data);
     if (!socket) return;
     if (!focusedLocker) return; // TODO: doit on essayer d'unlock selon le badge seul ? Je trouve ça risqué
 
@@ -78,8 +79,6 @@ function LockerStatus() {
     if (!socket) return;
 
     const hFeedback = (data: { locks: Lockers }) => {
-      console.log(data);
-
       setLockers(data.locks);
     };
 
@@ -95,9 +94,10 @@ function LockerStatus() {
     return () => {
       // socket.off("claim", hFeedback);
       // socket.off("free", hFeedback);
+      socket.off("welcome", hFeedback);
       socket.off("open", hFeedback);
       socket.off("close", hFeedback);
-      socket.on("badge", hFeedback);
+      socket.on("badge", hBadge);
     };
   }, [socket]);
 
