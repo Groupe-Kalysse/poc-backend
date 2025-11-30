@@ -40,7 +40,8 @@ export class Cu16Serial {
     const code = command.payload?.code;
     const action = command.payload?.action;
 
-    const num = command.payload?.port as number;
+    //FIX ⚠️ .locker devrait être .port
+    const num = command.payload?.locker as number;
     const commandToSerial = this.buildCommand("open", num);
     this.send(commandToSerial);
     this.commandBus.fireEvent({
