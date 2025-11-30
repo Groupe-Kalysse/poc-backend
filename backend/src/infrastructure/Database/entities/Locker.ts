@@ -10,4 +10,10 @@ export class Locker extends BaseEntity {
 
   @Column()
   status: "open" | "closed" | "claimed";
+
+  @Column({ nullable: true })
+  unlockBadge?: string;
+
+  @Column({ nullable: true })
+  unlockCode?: string;
 }

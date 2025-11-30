@@ -8,6 +8,7 @@ import express from "express";
 import { createServer } from "http";
 import apiRoutes from "./infrastructure/Api/routes";
 import { dataSource } from "./infrastructure/Database/dataSource";
+import DatabaseListener from "./infrastructure/Database/DatabaseListener";
 
 const app = express();
 const httpServer = createServer(app);
@@ -31,6 +32,7 @@ async function initAll() {
     badges: newBadgeCollection(commBus),
     socket: socketServer,
     http: httpServer,
+    dbListener: new DatabaseListener(commBus)
   };
 }
 

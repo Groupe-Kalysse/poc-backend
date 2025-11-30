@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./LockerStatus.css";
 import "./LockerStatus_Layout.css";
 import { useSocket } from "../hooks/useSocket";
@@ -22,31 +22,19 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
-  const { socket, isConnected } = useSocket();
-  const [focusedLocker, setFocus] = useState<Locker | null>(null);
+  const [focusedLockerId, setFocusedLockerId] = useState<number | null>(null);
+  const focusedLocker = lockers.find((l) => l.id === focusedLockerId) ?? null;
+  const focusedLockerRef = useRef<Locker | null>(null);
 
-  async function claimLocker(locker: Locker) {
-    console.log("claim ", focusedLocker?.id);
-    // await fetch(`/api/lockers/${num}/claim`, {
-    //   method: "PUT",
-    // });
-    setFocus(locker);
-  }
-  async function freeLocker() {
-    console.log("free ", focusedLocker?.id);
-    if (!focusedLocker) return;
-    // await fetch(`/api/lockers/${focusedLocker.id}/free`, {
-    //   method: "PUT",
-    // });
-    setFocus(null);
-  }
+  const { socket, isConnected } = useSocket();
+
   async function openLocker() {
     console.log("open ", focusedLocker?.id);
     if (!focusedLocker) return;
     await fetch(`/api/lockers/${focusedLocker.id}/open`, {
       method: "PUT",
     });
-    setFocus(null);
+    setFocusedLockerId(null);
   }
   async function closeLocker() {
     console.log("close ", focusedLocker?.id);
@@ -54,29 +42,58 @@ function LockerStatus() {
     await fetch(`/api/lockers/${focusedLocker.id}/close`, {
       method: "PUT",
     });
-    setFocus(null);
+    setFocusedLockerId(null);
   }
+  const hFeedback = (data: { locks: Lockers }) => {
+    setLockers(data.locks);
+  };
+
+  const hBadge = async (data: { trace: string }) => {
+    if (!socket) return;
+    console.log("socket ok");
+
+    if (!focusedLockerRef.current) return;
+    console.log("focusedLockerRef ok");
+
+    if (focusedLockerRef.current.status === "open") {
+      console.log("ready to send");
+      socket.emit("ask-close", {
+        locker: focusedLockerRef.current.id,
+        idType: "badge",
+        code: data.trace,
+      });
+    }
+    // else
+    //   socket.emit("ask-open", {
+    //     locker: focusedLocker.id,
+    //     idType: "badge",
+    //     code: data,
+    //   });
+  };
+
+  useEffect(() => {
+    focusedLockerRef.current = focusedLocker;
+  }, [focusedLocker]);
 
   useEffect(() => {
     if (!socket) return;
 
-    const hFeedback = (data: { locks: Lockers }) => {
-      console.log(data);
-
-      setLockers(data.locks);
-    };
+    // socket.on("claim", hFeedback);
+    // socket.on("free", hFeedback);
+    // socket.on("open", hFeedback);
+    socket.on("open", hFeedback);
 
     socket.on("welcome", hFeedback);
-    socket.on("claim", hFeedback);
-    socket.on("free", hFeedback);
-    socket.on("open", hFeedback);
+    socket.on("badge", hBadge);
     socket.on("close", hFeedback);
 
     return () => {
-      socket.off("claim", hFeedback);
-      socket.off("free", hFeedback);
+      // socket.off("claim", hFeedback);
+      // socket.off("free", hFeedback);
+      socket.off("welcome", hFeedback);
       socket.off("open", hFeedback);
       socket.off("close", hFeedback);
+      socket.off("badge", hBadge);
     };
   }, [socket]);
 
@@ -96,7 +113,7 @@ function LockerStatus() {
   return (
     <Dialog
       onOpenChange={(open) => {
-        if (!open) freeLocker();
+        if (!open) setFocusedLockerId(null);
       }}
     >
       <ul className="container">
@@ -106,8 +123,8 @@ function LockerStatus() {
               key={locker.id}
               asChild
               onClick={async () => {
-                await setFocus(locker);
-                claimLocker(locker);
+                console.log("ask to claim locker", locker);
+                setFocusedLockerId(locker.id);
               }}
             >
               <li

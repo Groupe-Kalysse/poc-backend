@@ -4,7 +4,7 @@ stop:
 	docker stop $(shell docker ps -a -q)
 
 clean:
-	docker system prune -af --volumes && sudo rm -rf persist/
+	docker system prune -af --volumes && sudo rm -rf persist/ /run/pcscd/pcscd.comm
 
 enter:
 	docker exec -it $(target) sh
