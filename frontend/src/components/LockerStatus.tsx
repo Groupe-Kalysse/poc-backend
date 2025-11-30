@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./LockerStatus.css";
 import "./LockerStatus_Layout.css";
 import { useSocket } from "../hooks/useSocket";
@@ -22,6 +22,8 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
+  const focusedLockerRef = useRef<Locker | null>(null);
+
   const [focusedLockerId, setFocusedLockerId] = useState<number | null>(null);
   const focusedLocker = lockers.find((l) => l.id === focusedLockerId) ?? null;
   const { socket, isConnected } = useSocket();
@@ -48,13 +50,12 @@ function LockerStatus() {
 
   const hBadge = async (data: { trace: string }) => {
     if (!socket) return;
-    console.log({ focusedLocker });
 
-    if (!focusedLocker) return;
+    if (!focusedLockerRef.current) return;
 
-    if (focusedLocker.status === "open")
+    if (focusedLockerRef.current.status === "open")
       socket.emit("ask-close", {
-        locker: focusedLocker.id,
+        locker: focusedLockerRef.current.id,
         idType: "badge",
         code: data.trace,
       });
@@ -65,6 +66,10 @@ function LockerStatus() {
     //     code: data,
     //   });
   };
+
+  useEffect(() => {
+    focusedLockerRef.current = focusedLocker;
+  }, [focusedLocker]);
 
   useEffect(() => {
     if (!socket) return;
@@ -118,21 +123,13 @@ function LockerStatus() {
                 setFocusedLockerId(locker.id);
               }}
             >
-              {" "}
-              <div
-                onClick={() => {
-                  console.log("CLICKED", locker);
-                  setFocusedLockerId(locker.id);
-                }}
+              <li
+                className={`${locker.status} ${
+                  focusedLocker?.id === locker.id && "claimed"
+                } ${locker.lockerNumber}`}
               >
-                <li
-                  className={`${locker.status} ${
-                    focusedLocker?.id === locker.id && "claimed"
-                  } ${locker.lockerNumber}`}
-                >
-                  {locker.lockerNumber}
-                </li>
-              </div>
+                {locker.lockerNumber}
+              </li>
             </DialogTrigger>
           );
         })}
