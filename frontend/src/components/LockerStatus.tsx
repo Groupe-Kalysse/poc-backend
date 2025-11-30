@@ -55,13 +55,14 @@ function LockerStatus() {
     if (!focusedLockerRef.current) return;
     console.log("focusedLockerRef ok");
 
-    if (focusedLockerRef.current.status === "open")
+    if (focusedLockerRef.current.status === "open") {
       console.log("ready to send");
-    socket.emit("ask-close", {
-      locker: focusedLockerRef.current.id,
-      idType: "badge",
-      code: data.trace,
-    });
+      socket.emit("ask-close", {
+        locker: focusedLockerRef.current.id,
+        idType: "badge",
+        code: data.trace,
+      });
+    }
     // else
     //   socket.emit("ask-open", {
     //     locker: focusedLocker.id,
