@@ -26,7 +26,7 @@ function LockerStatus() {
   const [focusedLocker, setFocus] = useState<Locker | null>(null);
 
   async function claimLocker(locker: Locker) {
-    console.log("claim ", focusedLocker?.id);
+    console.log("claim ", locker.id);
     // await fetch(`/api/lockers/${num}/claim`, {
     //   method: "PUT",
     // });
