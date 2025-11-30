@@ -19,8 +19,6 @@ export default class DatabaseListener {
     const code = command.payload?.code as string;
     const action = command.payload?.action as string;
 
-    console.log("event target (dbListener): ", command);
-
     const lock = await Locker.findOneByOrFail({ id: locker });
     if (action === "close") {
       if (lock.status === "closed")

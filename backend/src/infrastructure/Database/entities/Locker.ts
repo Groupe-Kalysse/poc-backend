@@ -8,6 +8,9 @@ export class Locker extends BaseEntity {
   @Column()
   lockerNumber: string;
 
+  @Column({ unique: true })
+  port: number;
+
   @Column()
   status: "open" | "closed" | "claimed";
 
