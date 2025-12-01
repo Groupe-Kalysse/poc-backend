@@ -140,7 +140,11 @@ function LockerStatus() {
         </DialogHeader>
         <DialogFooter className="flex justify-evenly">
           <div className="flex-1">
-            <p>&nbsp;{pin.replace(/./g, "* ")} </p>
+            <p className="flex justify-between">
+              <span>{pin.substring(0,4).replace(/./g, "* ")}</span>
+              &nbsp;
+              <span>{pin.substring(4,8).replace(/./g, "* ")}</span>
+            </p>
             <div className="flex flex-wrap flex-1 gap-3 text-xl">
               {"1234567890".split("").map((num) => (
                 <Button
@@ -160,10 +164,9 @@ function LockerStatus() {
             </div>
           </div>
           <Separator orientation="vertical"/>
-            <span className="flex flex-1">
+            <div className="flex flex-1">
               badge
-            </span>
-
+            </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
