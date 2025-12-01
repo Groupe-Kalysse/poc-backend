@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 
 type Locker = {
   id: number;
@@ -22,28 +23,18 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
+    const [pin, setPin] = useState<string>("");
   const [focusedLockerId, setFocusedLockerId] = useState<number | null>(null);
   const focusedLocker = lockers.find((l) => l.id === focusedLockerId) ?? null;
   const focusedLockerRef = useRef<Locker | null>(null);
 
   const { socket, isConnected } = useSocket();
 
-  async function openLocker() {
-    if (!focusedLocker) return;
-    await fetch(`/api/lockers/${focusedLocker.id}/open`, {
-      method: "PUT",
-    });
-    setFocusedLockerId(null);
-  }
-  async function closeLocker() {
-    if (!focusedLocker) return;
-    await fetch(`/api/lockers/${focusedLocker.id}/close`, {
-      method: "PUT",
-    });
-    setFocusedLockerId(null);
-  }
   const hFeedback = (data: { locks: Lockers }) => {
     setLockers(data.locks);
+  };
+    const hNumber = (num: string) => {
+    setPin(pin + num);
   };
 
   const hBadge = async (data: { trace: string }) => {
@@ -145,22 +136,34 @@ function LockerStatus() {
             {focusedLocker?.status === "closed" ? "Ouvrir" : "Verrouiller"} le
             casier {focusedLocker?.lockerNumber}
           </DialogTitle>
-          <DialogDescription>lorem100</DialogDescription>
+          <DialogDescription>Merci de taper votre code comme demandé OU de passer votre badge pour vérification</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-start">
-          {focusedLocker?.status === "closed" ? (
-            <DialogClose asChild>
-              <Button type="submit" variant="default" onClick={openLocker}>
-                Ouvrir
-              </Button>
-            </DialogClose>
-          ) : (
-            <DialogClose asChild>
-              <Button type="submit" variant="default" onClick={closeLocker}>
-                Verrouiller
-              </Button>
-            </DialogClose>
-          )}
+        <DialogFooter className="flex justify-evenly">
+          <div className="flex-1">
+            <p>&nbsp;{pin.replace(/./g, "* ")} </p>
+            <div className="flex flex-wrap flex-1 gap-3 text-xl">
+              {"1234567890".split("").map((num) => (
+                <Button
+                key={num}
+                onClick={(evt) => {
+                  evt.preventDefault();
+                  hNumber(num);
+                }}
+                >
+                  {num}
+                </Button>
+              ))}
+              <Button onClick={(evt) => {
+                  evt.preventDefault();
+                  setPin("");
+                }}>X</Button>
+            </div>
+          </div>
+          <Separator orientation="vertical"/>
+            <span className="flex flex-1">
+              badge
+            </span>
+
         </DialogFooter>
       </DialogContent>
     </Dialog>
