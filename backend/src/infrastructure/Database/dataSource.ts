@@ -8,6 +8,7 @@ const { DB_HOST, DB_USER, DB_DATABASE, DB_PASSWORD } = process.env;
 export const dataSource = new DataSource({
   entities,
   synchronize: true,
+  dropSchema: true, // TODO: REMOVE IN PRODUCTION !!
   logging: false,
 
   type: "postgres",

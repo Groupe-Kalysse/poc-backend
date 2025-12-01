@@ -1,14 +1,14 @@
-.PHONY: stop clean enter dev
+.PHONY: stop clean prune dev
 
 stop:
 	docker stop $(shell docker ps -a -q)
 
 clean:
-	docker system prune -af --volumes && sudo rm -rf persist/ /run/pcscd/pcscd.comm
+	sudo rm -rf persist/ /run/pcscd/pcscd.comm
 
-enter:
-	docker exec -it $(target) sh
+prune:
+	docker system prune -af --volumes
 
 dev: 
-	docker compose --env-file .env.dev -f compose.dev.yaml up -d
+	docker compose --env-file .env.dev -f compose.dev.yaml up -d --build
 

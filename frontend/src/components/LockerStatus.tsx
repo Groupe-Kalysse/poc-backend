@@ -29,7 +29,6 @@ function LockerStatus() {
   const { socket, isConnected } = useSocket();
 
   async function openLocker() {
-    console.log("open ", focusedLocker?.id);
     if (!focusedLocker) return;
     await fetch(`/api/lockers/${focusedLocker.id}/open`, {
       method: "PUT",
@@ -37,7 +36,6 @@ function LockerStatus() {
     setFocusedLockerId(null);
   }
   async function closeLocker() {
-    console.log("close ", focusedLocker?.id);
     if (!focusedLocker) return;
     await fetch(`/api/lockers/${focusedLocker.id}/close`, {
       method: "PUT",
@@ -50,25 +48,21 @@ function LockerStatus() {
 
   const hBadge = async (data: { trace: string }) => {
     if (!socket) return;
-    console.log("socket ok");
-
-    if (!focusedLockerRef.current) return;
-    console.log("focusedLockerRef ok");
-
+    if (!focusedLockerRef.current) return; //TODO si pas de casier focus, check badges admin ?
     if (focusedLockerRef.current.status === "open") {
-      console.log("ready to send");
       socket.emit("ask-close", {
         locker: focusedLockerRef.current.id,
         idType: "badge",
         code: data.trace,
       });
     }
-    // else
-    //   socket.emit("ask-open", {
-    //     locker: focusedLocker.id,
-    //     idType: "badge",
-    //     code: data,
-    //   });
+    if (focusedLockerRef.current.status === "closed") {
+      socket.emit("ask-open", {
+        locker: focusedLockerRef.current.id,
+        idType: "badge",
+        code: data.trace,
+      });
+    }
   };
 
   useEffect(() => {
@@ -78,18 +72,12 @@ function LockerStatus() {
   useEffect(() => {
     if (!socket) return;
 
-    // socket.on("claim", hFeedback);
-    // socket.on("free", hFeedback);
-    // socket.on("open", hFeedback);
-    socket.on("open", hFeedback);
-
     socket.on("welcome", hFeedback);
     socket.on("badge", hBadge);
     socket.on("close", hFeedback);
+    socket.on("open", hFeedback);
 
     return () => {
-      // socket.off("claim", hFeedback);
-      // socket.off("free", hFeedback);
       socket.off("welcome", hFeedback);
       socket.off("open", hFeedback);
       socket.off("close", hFeedback);
@@ -123,7 +111,6 @@ function LockerStatus() {
               key={locker.id}
               asChild
               onClick={async () => {
-                console.log("ask to claim locker", locker);
                 setFocusedLockerId(locker.id);
               }}
             >

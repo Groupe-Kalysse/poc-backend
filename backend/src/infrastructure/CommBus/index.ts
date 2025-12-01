@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import { CommandLog } from "../Database/entities/CommandLog";
 
 export type Command = {
@@ -46,16 +45,16 @@ export default class CommBus {
     })`;
     switch (command.type) {
       case "error":
-        console.log(chalk.red(message));
+        console.error(message);
         break;
       case "warning":
-        console.log(chalk.yellow(message));
+        console.warn(message);
         break;
       case "info":
-        console.log(chalk.green(message));
+        console.info(message);
         break;
       case "debug":
-        console.log(chalk.cyan(message));
+        console.debug(message);
         break;
     }
     CommandLog.create({
