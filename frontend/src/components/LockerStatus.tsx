@@ -14,6 +14,7 @@ import {
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { LuArrowDownLeft, LuSmartphoneNfc, LuTrash2 } from "react-icons/lu";
+import rfidLogo from '/RFID.svg'
 
 type Locker = {
   id: number;
@@ -208,7 +209,8 @@ function LockerStatus() {
           </div>
           <Separator orientation="vertical"/>
             <div className="flex flex-col flex-1 justify-center items-center text-9xl">
-              <LuSmartphoneNfc />
+              {/* <LuSmartphoneNfc /> */}
+              <img src={rfidLogo} className="w-1/2" />
               <LuArrowDownLeft className="text-8xl text-gray-400"/>
             </div>
         </DialogFooter>

@@ -10,5 +10,5 @@ prune:
 	docker system prune -af --volumes
 
 dev: 
-	docker compose --env-file .env.dev -f compose.dev.yaml up -d --build
+	docker compose --env-file .env.dev -f compose.dev.yaml up -d
 
