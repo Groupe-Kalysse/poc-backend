@@ -15,8 +15,12 @@ export class JsonLocker {
   // private state: LockerType[];
 
   constructor(commandBus: CommBus) {
-    const repo = dataSource.getRepository(Locker);
     this.commandBus = commandBus;
+    this.initialize();
+  }
+
+  async initialize() {
+    const repo = dataSource.getRepository(Locker);
     // this.claimedLocker = null;
 
     const newLockers = Locker.create(
@@ -26,7 +30,7 @@ export class JsonLocker {
         port: locker.port,
       }))
     );
-    repo.save(newLockers);
+    await repo.save(newLockers);
     // this.state = newLockers;
     this.openAllLocks();
     this.commandBus.listenEvent("serial-status", this.onUpdatedStatus);
