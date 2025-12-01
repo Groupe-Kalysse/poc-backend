@@ -13,7 +13,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-import { LuSmartphoneNfc, LuTrash2 } from "react-icons/lu";
+import { LuArrowDownLeft, LuSmartphoneNfc, LuTrash2 } from "react-icons/lu";
 
 type Locker = {
   id: number;
@@ -157,8 +157,8 @@ function LockerStatus() {
       <section>
         <h2>✅ Borne en attente d'instructions</h2>
         <ul>
-          <li>Fermer une porte puis badger pour réserver un casier</li>
-          <li>Badger pour ouvrir un casier préalablement réservé</li>
+          <li>Cliquer sur un casier bleu pour le réserver</li>
+          <li>Cliquer sur un casier rouge préalablement réservé pour le libérer</li>
         </ul>
       </section>
 
@@ -173,35 +173,38 @@ function LockerStatus() {
         <DialogFooter className="flex justify-evenly">
           <div className="flex-1">
             <p className="flex justify-between">
-              <span>{pin.substring(0,4).replace(/./g, "* ")}</span>
+              <div className="border-2 border-black w-40">{pin.substring(0,4).replace(/./g, "* ")}</div>
               &nbsp;
-              <span>{pin.substring(4,8).replace(/./g, "* ")}</span>
+              <div className="border-2 border-black w-40">{pin.substring(4,8).replace(/./g, "* ")}</div>
             </p>
             <div className="flex flex-wrap flex-1 gap-3 text-5xl justify-evenly">
               {"1234567890".split("").map((num) => (
                 <Button
-                className="aspect-square "
-                key={num}
-                onClick={(evt) => {
-                  evt.preventDefault();
-                  hNumber(num);
-                }}
+                  className="aspect-square"
+                  key={num}
+                  onClick={(evt) => {
+                    evt.preventDefault();
+                    hNumber(num);
+                  }}
                 >
                   {num}
                 </Button>
               ))}
               <Button 
-              variant="destructive"
+                variant="destructive"
                 className="aspect-square" 
                 onClick={(evt) => {
                   evt.preventDefault();
                   setPin("");
-                }}><LuTrash2 /></Button>
+                }}>
+                <LuTrash2 className="size-8"/>
+              </Button>
             </div>
           </div>
           <Separator orientation="vertical"/>
-            <div className="flex flex-1 justify-center items-center text-9xl">
+            <div className="flex flex-col flex-1 justify-center items-center text-9xl">
               <LuSmartphoneNfc />
+              <LuArrowDownLeft className="text-8xl text-gray-400"/>
             </div>
         </DialogFooter>
       </DialogContent>
