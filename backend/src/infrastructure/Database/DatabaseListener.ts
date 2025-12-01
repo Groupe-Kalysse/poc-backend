@@ -56,7 +56,6 @@ export default class DatabaseListener {
         // fire event
         return;
 
-      lock.status = "open";
       switch (idType) {
         case "badge":
           if (lock.unlockBadge !== code)
@@ -73,6 +72,9 @@ export default class DatabaseListener {
             return;
           break;
       }
+      lock.status = "open";
+      lock.unlockBadge = undefined;
+      lock.unlockCode = undefined;
       await lock.save();
 
       this.commandBus.fireEvent({
