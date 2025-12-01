@@ -4,7 +4,6 @@ import "./LockerStatus_Layout.css";
 import { useSocket } from "../hooks/useSocket";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -23,7 +22,8 @@ type Locker = {
 type Lockers = Locker[];
 function LockerStatus() {
   const [lockers, setLockers] = useState<Lockers>([]);
-    const [pin, setPin] = useState<string>("");
+  const [pin, setPin] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false)
   const [focusedLockerId, setFocusedLockerId] = useState<number | null>(null);
   const focusedLocker = lockers.find((l) => l.id === focusedLockerId) ?? null;
   const focusedLockerRef = useRef<Locker | null>(null);
@@ -32,8 +32,10 @@ function LockerStatus() {
 
   const hFeedback = (data: { locks: Lockers }) => {
     setLockers(data.locks);
+    setOpen(false)
+    setFocusedLockerId(null)
   };
-    const hNumber = (num: string) => {
+  const hNumber = (num: string) => {
     setPin(pin + num);
   };
 
@@ -91,8 +93,9 @@ function LockerStatus() {
 
   return (
     <Dialog
+      open={open}
       onOpenChange={(open) => {
-        if (!open) setFocusedLockerId(null);
+        if (!open) {setFocusedLockerId(null);setOpen(false)}
       }}
     >
       <ul className="container">
@@ -103,6 +106,7 @@ function LockerStatus() {
               asChild
               onClick={async () => {
                 setFocusedLockerId(locker.id);
+                setOpen(true)
               }}
             >
               <li
