@@ -27,7 +27,6 @@ function LockerStatus() {
   const [focusedLockerId, setFocusedLockerId] = useState<number | null>(null);
   const focusedLocker = lockers.find((l) => l.id === focusedLockerId) ?? null;
   const focusedLockerRef = useRef<Locker | null>(null);
-
   const { socket, isConnected } = useSocket();
 
   const hFeedback = (data: { locks: Lockers }) => {
@@ -59,10 +58,6 @@ function LockerStatus() {
   };
 
   useEffect(() => {
-    focusedLockerRef.current = focusedLocker;
-  }, [focusedLocker]);
-
-  useEffect(() => {
     if(pin.length!==8) return;
     if(pin.substring(0,4) !== pin.substring(4,8)) return setPin("")
     if (!socket) return;
@@ -82,8 +77,17 @@ function LockerStatus() {
         code: pin.substring(0,4),
       });
     }
-
+    setOpen(false)
+    setFocusedLockerId(null)
   }, [pin]);
+
+  useEffect(() => {
+    focusedLockerRef.current = focusedLocker;
+  }, [focusedLocker]);
+
+  useEffect(()=>{
+    setPin("")
+  }, [open])
 
   useEffect(() => {
     if (!socket) return;
@@ -157,13 +161,13 @@ function LockerStatus() {
         </ul>
       </section>
 
-      <DialogContent>
+      <DialogContent className="h-[90vh] min-w-[90vw] text-3xl">
         <DialogHeader>
           <DialogTitle>
             {focusedLocker?.status === "closed" ? "Ouvrir" : "Verrouiller"} le
             casier {focusedLocker?.lockerNumber}
           </DialogTitle>
-          <DialogDescription>Merci de taper votre code comme demandé OU de passer votre badge pour vérification</DialogDescription>
+          <DialogDescription className="text-xl">Merci de taper votre code comme demandé OU de passer votre badge pour vérification</DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex justify-evenly">
           <div className="flex-1">
@@ -172,9 +176,10 @@ function LockerStatus() {
               &nbsp;
               <span>{pin.substring(4,8).replace(/./g, "* ")}</span>
             </p>
-            <div className="flex flex-wrap flex-1 gap-3 text-xl">
+            <div className="flex flex-wrap flex-1 gap-3 text-5xl justify-evenly">
               {"1234567890".split("").map((num) => (
                 <Button
+                className="aspect-square"
                 key={num}
                 onClick={(evt) => {
                   evt.preventDefault();
@@ -184,14 +189,16 @@ function LockerStatus() {
                   {num}
                 </Button>
               ))}
-              <Button onClick={(evt) => {
+              <Button 
+                className="aspect-square" 
+                onClick={(evt) => {
                   evt.preventDefault();
                   setPin("");
-                }}>X</Button>
+                }}>Reset</Button>
             </div>
           </div>
           <Separator orientation="vertical"/>
-            <div className="flex flex-1">
+            <div className="flex flex-1 justify-center items-center">
               badge
             </div>
         </DialogFooter>
