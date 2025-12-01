@@ -77,8 +77,6 @@ export class JsonLocker {
     if (!lock) return;
     if (idType === "badge" && code !== lock.unlockBadge) return;
 
-    console.log("Ready to unlock ", locker);
-
     this.commandBus.fireEvent({
       label: "locker-open",
       type: "info",
@@ -95,7 +93,6 @@ export class JsonLocker {
   };
   openAllLocks = async () => {
     const lockers = await Locker.find();
-    console.log({ lockers });
 
     for (let i = 1; i <= lockers.length; i++) {
       setTimeout(() => {
