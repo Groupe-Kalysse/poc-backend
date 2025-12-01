@@ -21,7 +21,6 @@ export class JsonLocker {
 
   async initialize() {
     const repo = dataSource.getRepository(Locker);
-    // this.claimedLocker = null;
 
     const newLockers = Locker.create(
       lockers.map((locker) => ({
@@ -31,12 +30,9 @@ export class JsonLocker {
       }))
     );
     await repo.save(newLockers);
-    // this.state = newLockers;
     this.openAllLocks();
     this.commandBus.listenEvent("serial-status", this.onUpdatedStatus);
     this.commandBus.listenEvent("api-openAll", this.openAllLocks);
-    // this.commandBus.listenEvent("web-asked-claim", this.claimLock);
-    // this.commandBus.listenEvent("web-asked-free", this.freeLock);
     this.commandBus.listenEvent("web-asked-open", this.openLock);
     this.commandBus.listenEvent("web-asked-close", this.closeLock);
 
@@ -46,63 +42,6 @@ export class JsonLocker {
 
   onBadge(): void | Promise<void> {}
   onUpdatedStatus() {}
-
-  // claimLock = (command: Command) => {
-  //   const num = Number(command.payload?.id);
-  //   if (this.claimedLocker !== null) {
-  //     this.commandBus.fireEvent({
-  //       label: "locker-claim-miss",
-  //       type: "warning",
-  //       message: `⚠️ Unable to claim locker#${num}`,
-  //       payload: {
-  //         locks: this.state,
-  //       },
-  //     });
-  //     return;
-  //   }
-  //   this.claimedLocker = num;
-
-  //   this.state = this.state.map((candidate) => {
-  //     if (candidate.id !== num) return candidate;
-  //     return { ...candidate, status: "claimed" };
-  //   });
-  //   this.commandBus.fireEvent({
-  //     label: "locker-claim",
-  //     type: "info",
-  //     message: `✋ Claimed locker#${num}`,
-  //     payload: { locks: this.state },
-  //   });
-  //   this.claimFlag = setTimeout(() => {
-  //     this.freeLock(command);
-  //   }, 5000);
-  // };
-  // freeLock = (command: Command) => {
-  //   const num = Number(command.payload?.id);
-  //   if (this.claimedLocker === null) {
-  //     this.state = this.state.map((candidate) => {
-  //       if (candidate.id !== num) return candidate;
-  //       return { ...candidate, status: "open" };
-  //     });
-
-  //     this.commandBus.fireEvent({
-  //       label: "locker-free-miss",
-  //       type: "warning",
-  //       message: `⚠️ Unable to free locker#${num}`,
-  //       payload: {
-  //         locks: this.state,
-  //       },
-  //     });
-  //     return;
-  //   }
-  //   this.claimedLocker = null;
-  //   this.commandBus.fireEvent({
-  //     label: "locker-free",
-  //     type: "info",
-  //     message: `✋ Freed locker#${num}`,
-  //     payload: { locks: this.state },
-  //   });
-  //   if (this.claimFlag) clearTimeout(this.claimFlag);
-  // };
 
   closeLock = async (command: Command) => {
     const locker = command.payload?.locker;
@@ -125,11 +64,6 @@ export class JsonLocker {
         action: "close",
       },
     });
-
-    // this.state = this.state.map((candidate) => {
-    //   if (candidate.id !== lock.id) return candidate;
-    //   return { ...candidate, status: "closed" };
-    // });
   };
 
   openLock = async (command: Command) => {
@@ -158,13 +92,11 @@ export class JsonLocker {
         action: "open",
       },
     });
-    // this.state = this.state.map((candidate) => {
-    //   if (candidate.id !== lock.id) return candidate;
-    //   return { ...candidate, status: "open" };
-    // });
   };
   openAllLocks = async () => {
     const lockers = await Locker.find();
+    console.log({ lockers });
+
     for (let i = 1; i <= lockers.length; i++) {
       setTimeout(() => {
         this.openLock({
