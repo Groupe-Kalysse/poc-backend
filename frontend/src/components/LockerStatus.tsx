@@ -63,6 +63,29 @@ function LockerStatus() {
   }, [focusedLocker]);
 
   useEffect(() => {
+    if(pin.length!==8) return;
+    if(pin.substring(0,4) !== pin.substring(4,8)) return setPin("")
+    if (!socket) return;
+    if (!focusedLockerRef.current) return; //TODO si pas de casier focus, check badges admin ?
+    
+    if (focusedLockerRef.current.status === "open") {
+      socket.emit("ask-close", {
+        locker: focusedLockerRef.current.id,
+        idType: "code",
+        code: pin.substring(0,4),
+      });
+    }
+    if (focusedLockerRef.current.status === "closed") {
+      socket.emit("ask-open", {
+        locker: focusedLockerRef.current.id,
+        idType: "code",
+        code: pin.substring(0,4),
+      });
+    }
+
+  }, [pin]);
+
+  useEffect(() => {
     if (!socket) return;
 
     socket.on("welcome", hFeedback);
