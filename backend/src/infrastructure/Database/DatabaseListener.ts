@@ -33,7 +33,7 @@ export default class DatabaseListener {
           lock.unlockBadge = code;
           break;
         case "code":
-          lock.unlockBadge = code;
+          lock.unlockCode = code;
           break;
         default:
           //TODO
