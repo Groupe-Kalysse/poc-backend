@@ -13,6 +13,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
+import { LuSmartphoneNfc, LuTrash2 } from "react-icons/lu";
 
 type Locker = {
   id: number;
@@ -179,7 +180,7 @@ function LockerStatus() {
             <div className="flex flex-wrap flex-1 gap-3 text-5xl justify-evenly">
               {"1234567890".split("").map((num) => (
                 <Button
-                className="aspect-square"
+                className="aspect-square "
                 key={num}
                 onClick={(evt) => {
                   evt.preventDefault();
@@ -190,16 +191,17 @@ function LockerStatus() {
                 </Button>
               ))}
               <Button 
+              variant="destructive"
                 className="aspect-square" 
                 onClick={(evt) => {
                   evt.preventDefault();
                   setPin("");
-                }}>Reset</Button>
+                }}><LuTrash2 /></Button>
             </div>
           </div>
           <Separator orientation="vertical"/>
-            <div className="flex flex-1 justify-center items-center">
-              badge
+            <div className="flex flex-1 justify-center items-center text-9xl">
+              <LuSmartphoneNfc />
             </div>
         </DialogFooter>
       </DialogContent>
