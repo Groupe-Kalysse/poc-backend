@@ -173,9 +173,9 @@ function LockerStatus() {
         <DialogFooter className="flex justify-evenly">
           <div className="flex-1">
             <p className="flex justify-between">
-              <div className="border-2 border-black w-40">{pin.substring(0,4).replace(/./g, "* ")}</div>
+              <div className="m-2 p-1 border-2 border-black w-40 h-12">{pin.substring(0,4).replace(/./g, "* ")}</div>
               &nbsp;
-              <div className="border-2 border-black w-40">{pin.substring(4,8).replace(/./g, "* ")}</div>
+              <div className="m-2 p-1 border-2 border-black w-40 h-12">{pin.substring(4,8).replace(/./g, "* ")}</div>
             </p>
             <div className="flex flex-wrap flex-1 gap-3 text-5xl justify-evenly">
               {"1234567890".split("").map((num) => (
