@@ -59,12 +59,12 @@ function LockerStatus() {
   };
 
   useEffect(() => {
-    if(pin.length!==8) return;
-    if(pin.substring(0,4) !== pin.substring(4,8)) return setPin("")
     if (!socket) return;
     if (!focusedLockerRef.current) return; //TODO si pas de casier focus, check badges admin ?
     
     if (focusedLockerRef.current.status === "open") {
+      if(pin.length!==8) return;
+      if(pin.substring(0,4) !== pin.substring(4,8)) return setPin("")
       socket.emit("ask-close", {
         locker: focusedLockerRef.current.id,
         idType: "code",
@@ -72,6 +72,7 @@ function LockerStatus() {
       });
     }
     if (focusedLockerRef.current.status === "closed") {
+      if(pin.length!==4) return;
       socket.emit("ask-open", {
         locker: focusedLockerRef.current.id,
         idType: "code",
@@ -168,15 +169,15 @@ function LockerStatus() {
             {focusedLocker?.status === "closed" ? "Ouvrir" : "Verrouiller"} le
             casier {focusedLocker?.lockerNumber}
           </DialogTitle>
-          <DialogDescription className="text-xl">Merci de taper votre code comme demandé OU de passer votre badge pour vérification</DialogDescription>
+          <DialogDescription className="text-xl">Taper votre code à quatre chiffres OU passer votre badge pour {focusedLocker?.status === "open" ? "enregistrement":"vérification"}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex justify-evenly">
           <div className="flex-1">
-            <p className="flex justify-between">
-              <div className="m-2 p-1 border-2 border-black w-40 h-12">{pin.substring(0,4).replace(/./g, "* ")}</div>
+            <div className="flex justify-between">
+              <p className="m-2 p-1 border-2 border-black w-40 h-12">{pin.substring(0,4).replace(/./g, "* ")}</p>
               &nbsp;
-              <div className="m-2 p-1 border-2 border-black w-40 h-12">{pin.substring(4,8).replace(/./g, "* ")}</div>
-            </p>
+              {focusedLocker?.status === "open" && <p className="m-2 p-1 border-2 border-black w-40 h-12">{pin.substring(4,8).replace(/./g, "* ")}</p>}
+            </div>
             <div className="flex flex-wrap flex-1 gap-3 text-5xl justify-evenly">
               {"1234567890".split("").map((num) => (
                 <Button
